@@ -1,0 +1,7 @@
+{
+  "name": "inventory-management-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
