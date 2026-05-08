@@ -8,145 +8,154 @@
 </ion-header>
 
 <ion-content>
-  <!-- Search and Scan Section -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Search Items</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-grid>
-        <ion-row>
-          <ion-col size="8">
-            <ion-searchbar
-              [(ngModel)]="searchQuery"
-              placeholder="Search by name or barcode"
-              (ionInput)="searchItems()"
-              (ionClear)="loadAllItems()">
-            </ion-searchbar>
-          </ion-col>
-          <ion-col size="4">
-            <ion-button expand="block" (click)="startScan()" [disabled]="isScanning">
-              <ion-icon slot="start" name="barcode"></ion-icon>
-              Scan
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+  <ion-row>
+    <ion-col size="8">
+      <!-- Search and Scan Section -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Search Items</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="8">
+                <ion-searchbar
+                  [(ngModel)]="searchQuery"
+                  placeholder="Search by name or barcode"
+                  (ionInput)="searchItems()"
+                  (ionClear)="loadAllItems()">
+                </ion-searchbar>
+              </ion-col>
+              <ion-col size="4">
+                <ion-button expand="block" (click)="startScan()" [disabled]="isScanning">
+                  <ion-icon slot="start" name="barcode"></ion-icon>
+                  Scan
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
 
-      <!-- Scanner Video Container -->
-      <div *ngIf="isScanning" id="scan-video-container" style="position: relative; height: 200px; background: #000; margin-top: 10px;">
+          <!-- Scanner Video Container -->
+          <div *ngIf="isScanning" id="scan-video-container" style="position: relative; height: 200px; background: #000; margin-top: 10px;">
+          </div>
+          <p *ngIf="scanError" style="color: red; margin-top: 5px;">{{ scanError }}</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Items List -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Available Items ({{ searchResults.length }})</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div *ngIf="isSearching" style="text-align: center; padding: 20px;">
+            <ion-spinner name="circles"></ion-spinner>
+            <p>Loading items...</p>
+          </div>
+          
+          <ion-list *ngIf="!isSearching">
+            <ion-item *ngFor="let item of searchResults" (click)="toggleItemSelection(item)" 
+                      [class.selected-item]="isItemSelected(item)">
+              <ion-icon slot="start" name="cube"></ion-icon>
+              <ion-label>
+                <h2>{{ item.name }}</h2>
+                <p>Barcode: {{ item.barcode }}</p>
+                <p>Price: {{ item.currency }}{{ item.price | number:'1.2-2' }}</p>
+                <p>Stock: {{ item.quantity }}</p>
+              </ion-label>
+              <ion-badge slot="end" color="success" *ngIf="isItemSelected(item)">
+                {{ getSelectedQuantity(item.id!) }} selected
+              </ion-badge>
+            </ion-item>
+            
+            <ion-item *ngIf="searchResults.length === 0">
+              <ion-label class="ion-text-center">
+                No items found
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+    <ion-col size="4">
+      <!-- Selected Items Section -->
+      <ion-card *ngIf="selectedItems.length > 0">
+        <ion-card-header>
+          <ion-card-title>Selected Items ({{ selectedItems.length }})</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item *ngFor="let selectedItem of selectedItems; let i = index">
+              <ion-label>
+                <h2>{{ selectedItem.item.name }}</h2>
+                <p>{{ selectedItem.item.currency }}{{ selectedItem.item.price | number:'1.2-2' }} each</p>
+                <p>Line Total: {{ selectedItem.item.currency }}{{ (selectedItem.item.price * selectedItem.quantity) | number:'1.2-2' }}</p>
+              </ion-label>
+              <ion-row slot="end">
+                <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity - 1)">
+                  <ion-icon name="remove"></ion-icon>
+                </ion-button>
+                <ion-button size="small" fill="clear" disabled>
+                  {{ selectedItem.quantity }}
+                </ion-button>
+                <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity + 1)">
+                  <ion-icon name="add"></ion-icon>
+                </ion-button>
+                <ion-button size="small" color="danger" (click)="removeFromSelection(i)">
+                  <ion-icon name="trash"></ion-icon>
+                </ion-button>
+              </ion-row>
+            </ion-item>
+          </ion-list>
+
+          <!-- Total -->
+          <div class="total-section">
+            <h3>Total: GHS{{ getTotalAmount() | number:'1.2-2' }}</h3>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Sale Details -->
+      <ion-card *ngIf="selectedItems.length > 0">
+        <ion-card-header>
+          <ion-card-title>Sale Details</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <!-- Custom Date -->
+          <ion-item>
+            <ion-label position="floating">Sale Date</ion-label>
+            <ion-datetime
+              [(ngModel)]="saleDate"
+              display-format="MMM DD, YYYY HH:mm"
+              picker-format="MMM DD, YYYY HH:mm">
+            </ion-datetime>
+          </ion-item>
+
+          <!-- Payment Method -->
+          <ion-item>
+            <ion-label>Payment Method</ion-label>
+            <ion-select [(ngModel)]="paymentMethod">
+              <ion-select-option value="cash">Cash</ion-select-option>
+              <ion-select-option value="card">Card</ion-select-option>
+              <ion-select-option value="mobile_money">Mobile Money</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Create Sale Button -->
+      <div class="action-button" *ngIf="selectedItems.length > 0">
+        <ion-button expand="block" size="large" (click)="createSale()" [disabled]="loading">
+          <ion-spinner *ngIf="loading"></ion-spinner>
+          <span *ngIf="!loading">Create Sale</span>
+        </ion-button>
       </div>
-      <p *ngIf="scanError" style="color: red; margin-top: 5px;">{{ scanError }}</p>
-    </ion-card-content>
-  </ion-card>
+    </ion-col>
+  </ion-row>
+  
 
-  <!-- Items List -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Available Items ({{ searchResults.length }})</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div *ngIf="isSearching" style="text-align: center; padding: 20px;">
-        <ion-spinner name="circles"></ion-spinner>
-        <p>Loading items...</p>
-      </div>
-      
-      <ion-list *ngIf="!isSearching">
-        <ion-item *ngFor="let item of searchResults" (click)="toggleItemSelection(item)" 
-                  [class.selected-item]="isItemSelected(item)">
-          <ion-icon slot="start" name="cube"></ion-icon>
-          <ion-label>
-            <h2>{{ item.name }}</h2>
-            <p>Barcode: {{ item.barcode }}</p>
-            <p>Price: {{ item.currency }}{{ item.price | number:'1.2-2' }}</p>
-            <p>Stock: {{ item.quantity }}</p>
-          </ion-label>
-          <ion-badge slot="end" color="success" *ngIf="isItemSelected(item)">
-            {{ getSelectedQuantity(item.id!) }} selected
-          </ion-badge>
-        </ion-item>
-        
-        <ion-item *ngIf="searchResults.length === 0">
-          <ion-label class="ion-text-center">
-            No items found
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Selected Items Section -->
-  <ion-card *ngIf="selectedItems.length > 0">
-    <ion-card-header>
-      <ion-card-title>Selected Items ({{ selectedItems.length }})</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let selectedItem of selectedItems; let i = index">
-          <ion-label>
-            <h2>{{ selectedItem.item.name }}</h2>
-            <p>{{ selectedItem.item.currency }}{{ selectedItem.item.price | number:'1.2-2' }} each</p>
-            <p>Line Total: {{ selectedItem.item.currency }}{{ (selectedItem.item.price * selectedItem.quantity) | number:'1.2-2' }}</p>
-          </ion-label>
-          <ion-row slot="end">
-            <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity - 1)">
-              <ion-icon name="remove"></ion-icon>
-            </ion-button>
-            <ion-button size="small" fill="clear" disabled>
-              {{ selectedItem.quantity }}
-            </ion-button>
-            <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity + 1)">
-              <ion-icon name="add"></ion-icon>
-            </ion-button>
-            <ion-button size="small" color="danger" (click)="removeFromSelection(i)">
-              <ion-icon name="trash"></ion-icon>
-            </ion-button>
-          </ion-row>
-        </ion-item>
-      </ion-list>
-
-      <!-- Total -->
-      <div class="total-section">
-        <h3>Total: GHS{{ getTotalAmount() | number:'1.2-2' }}</h3>
-      </div>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Sale Details -->
-  <ion-card *ngIf="selectedItems.length > 0">
-    <ion-card-header>
-      <ion-card-title>Sale Details</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <!-- Custom Date -->
-      <ion-item>
-        <ion-label position="floating">Sale Date</ion-label>
-        <ion-datetime
-          [(ngModel)]="saleDate"
-          display-format="MMM DD, YYYY HH:mm"
-          picker-format="MMM DD, YYYY HH:mm">
-        </ion-datetime>
-      </ion-item>
-
-      <!-- Payment Method -->
-      <ion-item>
-        <ion-label>Payment Method</ion-label>
-        <ion-select [(ngModel)]="paymentMethod">
-          <ion-select-option value="cash">Cash</ion-select-option>
-          <ion-select-option value="card">Card</ion-select-option>
-          <ion-select-option value="mobile_money">Mobile Money</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Create Sale Button -->
-  <div class="action-button" *ngIf="selectedItems.length > 0">
-    <ion-button expand="block" size="large" (click)="createSale()" [disabled]="loading">
-      <ion-spinner *ngIf="loading"></ion-spinner>
-      <span *ngIf="!loading">Create Sale</span>
-    </ion-button>
-  </div>
+ 
 
   <!-- Loading Overlay -->
   <div *ngIf="loading" class="loading-overlay">
