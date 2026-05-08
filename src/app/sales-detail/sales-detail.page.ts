@@ -55,10 +55,12 @@ export class SalesDetailPage implements OnInit {
 
     obs$.subscribe({
       next: (data:any) => {
-        // Add saleId to each item for delete/update operations
+        // For detailed view, we already have saleId and itemId from the API
         this.items = data.map((item: any) => ({
           ...item,
-          saleId: this.periodValue // The periodValue is the date/month/year which we'll use as sale reference
+          // Ensure we have both IDs for delete/update operations
+          saleId: item.saleId || this.periodValue, // Use API saleId or fallback to periodValue
+          itemId: item.itemId || item.id // Ensure itemId is set
         }));
         console.log('Loaded items:', this.items);
         this.loading = false;
@@ -145,28 +147,28 @@ export class SalesDetailPage implements OnInit {
      await alert.present();
    }
 
-   updateItemQuantity(itemId: string, saleId: string, quantity: number) {
-     this.loading = true;
-     this.salesReportsService.updateItemQuantity(saleId, itemId, quantity).subscribe({
-       next: (updatedItem:any) => {
-         // Update the item in the list
-         const index = this.items.findIndex(item => item.itemId === itemId);
-         if (index !== -1) {
-           this.items[index] = {
-             ...updatedItem,
-             saleId: saleId
-           };
-         }
-         this.loading = false;
-         this.showToast('Item updated successfully');
-       },
-       error: (err) => {
-         console.error('Error updating item:', err);
-         this.loading = false;
-         this.showToast('Failed to update item');
-       }
-     });
-   }
+    updateItemQuantity(itemId: string, saleId: string, quantity: number) {
+      this.loading = true;
+      this.salesReportsService.updateItemQuantity(saleId, itemId, quantity).subscribe({
+        next: (updatedItem:any) => {
+          // Update the item in the list
+          const index = this.items.findIndex(item => item.itemId === itemId);
+          if (index !== -1) {
+            this.items[index] = {
+              ...updatedItem,
+              saleId: saleId
+            };
+          }
+          this.loading = false;
+          this.showToast('Item updated successfully');
+        },
+        error: (err) => {
+          console.error('Error updating item:', err);
+          this.loading = false;
+          this.showToast('Failed to update item');
+        }
+      });
+    }
 
   exportToCsv() {
     if (this.items.length === 0) return;

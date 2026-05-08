@@ -88,15 +88,15 @@ export class SalesReportsService {
   }
 
   getDailyItems(date: string): Observable<SalesItemDetail[]> {
-    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/daily/${date}/items`, { headers: this.getAuthHeaders() });
+    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/daily/${date}/items?detailed=true`, { headers: this.getAuthHeaders() });
   }
 
   getMonthlyItems(month: string): Observable<SalesItemDetail[]> {
-    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/monthly/${month}/items`, { headers: this.getAuthHeaders() });
+    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/monthly/${month}/items?detailed=true`, { headers: this.getAuthHeaders() });
   }
 
   getYearlyItems(year: string): Observable<SalesItemDetail[]> {
-    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/yearly/${year}/items`, { headers: this.getAuthHeaders() });
+    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/yearly/${year}/items?detailed=true`, { headers: this.getAuthHeaders() });
   }
 
   deleteItem(saleId: string, itemId: string): Observable<any> {
