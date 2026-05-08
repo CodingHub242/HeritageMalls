@@ -46,6 +46,7 @@ export interface SalesItemDetail {
   barcode: string;
   quantity: number;
   total_revenue: number;
+  saleId: string; // Added for delete/update operations
 
   name?: string;
   quantity_sold?: any;
@@ -96,5 +97,13 @@ export class SalesReportsService {
 
   getYearlyItems(year: string): Observable<SalesItemDetail[]> {
     return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/yearly/${year}/items`, { headers: this.getAuthHeaders() });
+  }
+
+  deleteItem(saleId: string, itemId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${saleId}/items/${itemId}`, { headers: this.getAuthHeaders() });
+  }
+
+  updateItemQuantity(saleId: string, itemId: string, quantity: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${saleId}/items/${itemId}`, { quantity }, { headers: this.getAuthHeaders() });
   }
 }

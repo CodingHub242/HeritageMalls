@@ -4,6 +4,7 @@ import { SalesReportsService, SalesItemDetail } from '../services/sales-reports.
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { saveAs } from 'file-saver';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-sales-detail',
@@ -20,7 +21,8 @@ export class SalesDetailPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private salesReportsService: SalesReportsService
+    private salesReportsService: SalesReportsService,
+    private alertController: AlertController
   ) {}
 
   ngOnInit() {
@@ -53,8 +55,12 @@ export class SalesDetailPage implements OnInit {
 
     obs$.subscribe({
       next: (data:any) => {
-        this.items = data;
-        console.log('Loaded items:', data);
+        // Add saleId to each item for delete/update operations
+        this.items = data.map((item: any) => ({
+          ...item,
+          saleId: this.periodValue // The periodValue is the date/month/year which we'll use as sale reference
+        }));
+        console.log('Loaded items:', this.items);
         this.loading = false;
       },
       error: (err:any) => {
@@ -66,6 +72,100 @@ export class SalesDetailPage implements OnInit {
 
   goBack() {
     this.router.navigate(['/admin']);
+  }
+
+  async deleteItem(itemId: string, saleId: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirm Delete',
+      message: 'Are you sure you want to delete this item from the sale?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.performDelete(itemId, saleId);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async performDelete(itemId: string, saleId: string) {
+    this.loading = true;
+    this.salesReportsService.deleteItem(saleId, itemId).subscribe({
+      next: () => {
+        // Remove the item from the list
+        this.items = this.items.filter(item => item.itemId !== itemId);
+        this.loading = false;
+        this.showToast('Item deleted successfully');
+      },
+      error: (err) => {
+        console.error('Error deleting item:', err);
+        this.loading = false;
+        this.showToast('Failed to delete item');
+      }
+    });
+  }
+
+  async editItem(itemId: string, saleId: string, currentQuantity: number) {
+    const alert = await this.alertController.create({
+      header: 'Edit Quantity',
+      inputs: [
+        {
+          name: 'quantity',
+          type: 'number',
+          label: 'Quantity',
+          value: currentQuantity,
+          min: '1'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Update',
+          handler: (data) => {
+            const quantity = parseInt(data.quantity);
+            if (!isNaN(quantity) && quantity >= 1) {
+              this.updateItemQuantity(itemId, saleId, quantity);
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  updateItemQuantity(itemId: string, saleId: string, quantity: number) {
+    this.loading = true;
+    this.salesReportsService.updateItemQuantity(saleId, itemId, quantity).subscribe({
+      next: (updatedItem:any) => {
+        // Update the item in the list
+        const index = this.items.findIndex(item => item.itemId === itemId);
+        if (index !== -1) {
+          this.items[index] = {
+            ...updatedItem,
+            saleId: saleId
+          };
+        }
+        this.loading = false;
+        this.showToast('Item updated successfully');
+      },
+      error: (err) => {
+        console.error('Error updating item:', err);
+        this.loading = false;
+        this.showToast('Failed to update item');
+      }
+    });
   }
 
   exportToCsv() {
@@ -86,5 +186,11 @@ export class SalesDetailPage implements OnInit {
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, `sales-${this.period}-${this.periodValue}.csv`);
+  }
+
+  private showToast(message: string) {
+    // Simple toast implementation - you might want to use Ionic ToastController
+    console.log(message);
+    // For now, just log to console. In a real app, you'd show a proper toast.
   }
 }

@@ -66,6 +66,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/sales-reports/daily/{date}/items', [SalesReportsController::class, 'dailyItems']);
     Route::get('/sales-reports/monthly/{month}/items', [SalesReportsController::class, 'monthlyItems']);
     Route::get('/sales-reports/yearly/{year}/items', [SalesReportsController::class, 'yearlyItems']);
+    // Delete and update sale items
+    Route::delete('/sales-reports/{saleId}/items/{itemId}', [SalesReportsController::class, 'deleteItem']);
+    Route::put('/sales-reports/{saleId}/items/{itemId}', [SalesReportsController::class, 'updateItemQuantity']);
     
     // Import routes
     Route::post('/import', [ItemController::class, 'importFromExcel']);
