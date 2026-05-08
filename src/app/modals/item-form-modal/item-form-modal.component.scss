@@ -2,6 +2,14 @@
   --maroon-primary: #800000;
   --maroon-light: #A52A2A;
   --maroon-dark: #4A0000;
+  
+  // Ensure modal content is scrollable with always-visible scrollbar
+  ion-content {
+    --overflow: auto;
+    max-height: 85vh;
+    overflow-y: scroll; // Always show scrollbar
+    height: 100%;
+  }
 }
 
 .image-upload-section {
