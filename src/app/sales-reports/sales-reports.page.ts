@@ -10,7 +10,8 @@ import { BaseChartDirective } from 'ng2-charts';
   selector: 'app-sales-reports',
   templateUrl: './sales-reports.page.html',
   styleUrls: ['./sales-reports.page.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  standalone: false
 })
 export class SalesReportsPage implements OnInit {
   dailySales: DailySales[] = [];
