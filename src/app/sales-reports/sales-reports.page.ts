@@ -1,5 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { SalesReportsService } from '../services/sales-reports.service';
 import { DailySales, MonthlySales, YearlySales, ItemBreakdown } from '../services/sales-reports.service';
 import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
@@ -9,8 +10,7 @@ import { BaseChartDirective } from 'ng2-charts';
   selector: 'app-sales-reports',
   templateUrl: './sales-reports.page.html',
   styleUrls: ['./sales-reports.page.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, BaseChartDirective]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SalesReportsPage implements OnInit {
   dailySales: DailySales[] = [];
@@ -142,7 +142,10 @@ export class SalesReportsPage implements OnInit {
   };
   public itemChartType: ChartType = 'doughnut';
 
-  constructor(private salesReportsService: SalesReportsService) {}
+  constructor(
+    private salesReportsService: SalesReportsService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadDailySales();
@@ -210,5 +213,21 @@ export class SalesReportsPage implements OnInit {
 
   goback() {
     window.history.back();
+  }
+
+  goToDailyDetail(date: string) {
+    this.router.navigate(['/sales-detail/daily', date]);
+  }
+
+  goToMonthlyDetail(month: string) {
+    this.router.navigate(['/sales-detail/monthly', month]);
+  }
+
+  goToYearlyDetail(year: string) {
+    this.router.navigate(['/sales-detail/yearly', year]);
+  }
+
+  goToItemDetail(itemId: string) {
+    this.router.navigate(['/item-details', itemId]);
   }
 }

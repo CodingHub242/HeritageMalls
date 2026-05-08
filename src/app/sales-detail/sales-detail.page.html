@@ -1,0 +1,46 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background:hsla(187, 52%, 26%, 0.733);--color:#fff">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="color: #fff;">
+      <ion-icon name="list-outline" style="margin-right: 12px;"></ion-icon>
+      {{ period | titlecase }} Sales Details - {{ periodValue }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="exportToCsv()" [disabled]="items.length === 0">
+        <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="sales-detail-container">
+    <ion-card *ngIf="!loading && items.length === 0">
+      <ion-card-content class="ion-text-center">
+        <p>No items found for this period.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="loading">
+      <ion-card-content class="ion-text-center">
+        <ion-spinner name="circles"></ion-spinner>
+        <p>Loading...</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list *ngIf="!loading && items.length > 0">
+      <ion-item *ngFor="let item of items" lines="full">
+        <ion-label>
+          <h2>{{ item.itemName }}</h2>
+          <p><ion-icon name="barcode-outline"></ion-icon> Barcode: <strong>{{ item.barcode || 'N/A' }}</strong></p>
+          <p><ion-icon name="cube-outline"></ion-icon> Quantity Sold: <strong>{{ item.quantity }}</strong></p>
+          <p><ion-icon name="cash-outline"></ion-icon> Total Revenue: <strong>GHS{{ item.total_revenue | number:'1.2-2' }}</strong></p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

@@ -62,6 +62,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/sales-reports/monthly', [SalesReportsController::class, 'monthly']);
     Route::get('/sales-reports/yearly', [SalesReportsController::class, 'yearly']);
     Route::get('/sales-reports/breakdown', [SalesReportsController::class, 'breakdown']);
+    // Detailed items for a specific period
+    Route::get('/sales-reports/daily/{date}/items', [SalesReportsController::class, 'dailyItems']);
+    Route::get('/sales-reports/monthly/{month}/items', [SalesReportsController::class, 'monthlyItems']);
+    Route::get('/sales-reports/yearly/{year}/items', [SalesReportsController::class, 'yearlyItems']);
     
     // Import routes
     Route::post('/import', [ItemController::class, 'importFromExcel']);

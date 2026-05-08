@@ -74,11 +74,16 @@ const routes: Routes = [
      loadChildren: () => import('./sales-reports/sales-reports.page.module').then( m => m.SalesReportsPageModule),
      canActivate: [AuthGuard]
    },
-{
-    path: 'admin',
-    loadChildren: () => import('./admin/admin.module').then( m => m.AdminModule),
-    canActivate: [AdminGuard]
-  },
+   {
+     path: 'sales-detail/:period/:value',
+     loadChildren: () => import('./sales-detail/sales-detail.module').then( m => m.SalesDetailPageModule),
+     canActivate: [AuthGuard]
+   },
+ {
+     path: 'admin',
+     loadChildren: () => import('./admin/admin.module').then( m => m.AdminModule),
+     canActivate: [AdminGuard]
+   },
  ];
 
 @NgModule({

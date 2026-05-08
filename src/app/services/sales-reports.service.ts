@@ -40,6 +40,14 @@ export interface ItemBreakdown {
   totalRevenue: number;
 }
 
+export interface SalesItemDetail {
+  itemId: string;
+  itemName: string;
+  barcode: string;
+  quantity: number;
+  total_revenue: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -73,5 +81,17 @@ export class SalesReportsService {
 
   getItemBreakdown(): Observable<ItemBreakdown[]> {
     return this.http.get<ItemBreakdown[]>(`${this.apiUrl}/breakdown`, { headers: this.getAuthHeaders() });
+  }
+
+  getDailyItems(date: string): Observable<SalesItemDetail[]> {
+    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/daily/${date}/items`, { headers: this.getAuthHeaders() });
+  }
+
+  getMonthlyItems(month: string): Observable<SalesItemDetail[]> {
+    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/monthly/${month}/items`, { headers: this.getAuthHeaders() });
+  }
+
+  getYearlyItems(year: string): Observable<SalesItemDetail[]> {
+    return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/yearly/${year}/items`, { headers: this.getAuthHeaders() });
   }
 }

@@ -97,4 +97,76 @@ class SalesReportsController extends Controller
 
         return response()->json($itemBreakdown);
     }
+
+    /**
+     * Get detailed items sold for a specific date
+     */
+    public function dailyItems($date)
+    {
+        $userId = Auth::id();
+        
+        $items = DB::table('sale_items')
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->join('items', 'sale_items.item_id', '=', 'items.id')
+            ->select('items.id as itemId')
+            ->select('items.name as itemName')
+            ->select('items.barcode')
+            ->selectRaw('SUM(sale_items.quantity) as quantity')
+            ->selectRaw('SUM(sale_items.quantity * sale_items.unit_price) as total_revenue')
+            ->where('sales.user_id', $userId)
+            ->whereDate('sales.created_at', $date)
+            ->groupBy('items.id', 'items.name', 'items.barcode')
+            ->orderBy('total_revenue', 'DESC')
+            ->get();
+
+        return response()->json($items);
+    }
+
+    /**
+     * Get detailed items sold for a specific month (YYYY-MM)
+     */
+    public function monthlyItems($month)
+    {
+        $userId = Auth::id();
+        
+        $items = DB::table('sale_items')
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->join('items', 'sale_items.item_id', '=', 'items.id')
+            ->select('items.id as itemId')
+            ->select('items.name as itemName')
+            ->select('items.barcode')
+            ->selectRaw('SUM(sale_items.quantity) as quantity')
+            ->selectRaw('SUM(sale_items.quantity * sale_items.unit_price) as total_revenue')
+            ->where('sales.user_id', $userId)
+            ->where(DB::raw('DATE_FORMAT(sales.created_at, "%Y-%m")'), $month)
+            ->groupBy('items.id', 'items.name', 'items.barcode')
+            ->orderBy('total_revenue', 'DESC')
+            ->get();
+
+        return response()->json($items);
+    }
+
+    /**
+     * Get detailed items sold for a specific year
+     */
+    public function yearlyItems($year)
+    {
+        $userId = Auth::id();
+        
+        $items = DB::table('sale_items')
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->join('items', 'sale_items.item_id', '=', 'items.id')
+            ->select('items.id as itemId')
+            ->select('items.name as itemName')
+            ->select('items.barcode')
+            ->selectRaw('SUM(sale_items.quantity) as quantity')
+            ->selectRaw('SUM(sale_items.quantity * sale_items.unit_price) as total_revenue')
+            ->where('sales.user_id', $userId)
+            ->whereYear('sales.created_at', $year)
+            ->groupBy('items.id', 'items.name', 'items.barcode')
+            ->orderBy('total_revenue', 'DESC')
+            ->get();
+
+        return response()->json($items);
+    }
 }
