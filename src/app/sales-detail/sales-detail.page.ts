@@ -53,8 +53,19 @@ export class SalesDetailPage implements OnInit {
         return;
     }
 
-    obs$.subscribe({
+obs$.subscribe({
       next: (data:any) => {
+        // DEBUG: Log raw API response to verify what's coming from the backend
+        console.log('=== DEBUG: Raw API Response ===');
+        console.log('API Response Data:', JSON.stringify(data, null, 2));
+        
+        // Check first item structure
+        if (data && data.length > 0) {
+          console.log('=== DEBUG: First Item Keys ===');
+          console.log('First Item Object:', data[0]);
+          console.log('First Item Keys:', Object.keys(data[0]));
+        }
+        
         // For detailed view, we already have saleId and itemId from the API
         this.items = data.map((item: any) => ({
           ...item,
@@ -62,6 +73,12 @@ export class SalesDetailPage implements OnInit {
           saleId: item.saleId, // Use API saleId directly
           itemId: item.itemId // Use API itemId directly
         }));
+        
+        // DEBUG: Log mapped items
+        console.log('=== DEBUG: Mapped Items ===');
+        console.log('First mapped item:', this.items[0]);
+        console.log('Has itemId?', !!this.items[0]?.itemId, 'itemId value:', this.items[0]?.itemId);
+        console.log('Has saleId?', !!this.items[0]?.saleId, 'saleId value:', this.items[0]?.saleId);
         console.log('Loaded items:', this.items);
         this.loading = false;
       },
@@ -98,7 +115,14 @@ export class SalesDetailPage implements OnInit {
     await alert.present();
   }
 
-  async performDelete(itemId: string, saleId: string) {
+async performDelete(itemId: string, saleId: string) {
+    // DEBUG: Log delete parameters
+    console.log('=== DEBUG: Delete Operation ===');
+    console.log('itemId:', itemId, 'type:', typeof itemId);
+    console.log('saleId:', saleId, 'type:', typeof saleId);
+    console.log('Is itemId undefined/null?', !itemId);
+    console.log('Is saleId undefined/null?', !saleId);
+    
     this.loading = true;
     this.salesReportsService.deleteItem(saleId, itemId).subscribe({
       next: () => {
@@ -147,7 +171,15 @@ export class SalesDetailPage implements OnInit {
      await alert.present();
    }
 
-    updateItemQuantity(itemId: string, saleId: string, quantity: number) {
+updateItemQuantity(itemId: string, saleId: string, quantity: number) {
+      // DEBUG: Log update parameters
+      console.log('=== DEBUG: Update Quantity Operation ===');
+      console.log('itemId:', itemId, 'type:', typeof itemId);
+      console.log('saleId:', saleId, 'type:', typeof saleId);
+      console.log('quantity:', quantity, 'type:', typeof quantity);
+      console.log('Is itemId undefined/null?', !itemId);
+      console.log('Is saleId undefined/null?', !saleId);
+      
       this.loading = true;
       this.salesReportsService.updateItemQuantity(saleId, itemId, quantity).subscribe({
         next: (updatedItem:any) => {
