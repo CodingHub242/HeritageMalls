@@ -1,0 +1,116 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button style="background: #fff;--background:#fff;" defaultHref="/home">
+        <ion-icon style="color:#fff;" name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+    <ion-title>Receipts</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadSales()" [disabled]="isLoading">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Search Bar -->
+  <div class="search-wrapper">
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      (ionInput)="onSearchChange()"
+      placeholder="Search receipts..."
+      show-cancel-button="never"
+      debounce="300"
+    ></ion-searchbar>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading receipts...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && sales.length === 0">
+    <div class="empty-icon">
+      <ion-icon name="receipt-outline"></ion-icon>
+    </div>
+    <h3>No Receipts Yet</h3>
+    <p>Complete a sale to see receipts here</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && sales.length > 0 && filteredSales.length === 0">
+    <div class="empty-icon">
+      <ion-icon name="search-outline"></ion-icon>
+    </div>
+    <h3>No Matching Receipts</h3>
+    <p>Try adjusting your search</p>
+  </div>
+
+  <!-- Receipts List -->
+  <div class="receipts-container" *ngIf="!isLoading && filteredSales.length > 0">
+    <div class="receipt-summary" *ngIf="sales.length > 0">
+      <div class="summary-item">
+        <span class="summary-label">Total</span>
+        <span class="summary-value">{{ sales.length }}</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">Revenue</span>
+        <span class="summary-value">GHS{{ totalRevenue | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">Showing</span>
+        <span class="summary-value">{{ filteredSales.length }}</span>
+      </div>
+      <p style="padding: 18px;margin: 0 auto;">To access options for each receipt, swipe left on it</p>
+    </div>
+
+    <ion-list lines="none">
+      <ion-item-sliding *ngFor="let sale of filteredSales" #itemSliding>
+        <ion-item class="receipt-item">
+          <ion-icon name="receipt-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h2>Sale #{{ sale.id }}</h2>
+            <p>{{ sale.created_at | date:'MMM d, y' }} at {{ sale.created_at | date:'shortTime' }}</p>
+            <div class="item-badge">{{ sale.items?.length || 0 }} item{{ sale.items?.length !== 1 ? 's' : '' }}</div>
+          </ion-label>
+          <div class="amount-section" slot="end">
+            <div class="amount">GHS{{ sale.total_amount | number:'1.2-2' }}</div>
+            <div class="payment-method">{{ sale.payment_method || 'cash' | uppercase }}</div>
+          </div>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option
+            color="primary"
+            (click)="viewReceipt(sale); itemSliding.close()"
+            expandable
+          >
+            <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
+            View
+          </ion-item-option>
+          <ion-item-option
+            color="success"
+            (click)="reprintReceipt(sale); itemSliding.close()"
+            expandable
+          >
+            <ion-icon slot="icon-only" name="print-outline"></ion-icon>
+            Print
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+  </div>
+
+  <!-- Load More -->
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content
+      loading-spinner="crescent"
+      loading-text="Loading more..."
+    ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

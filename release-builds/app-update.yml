@@ -1,0 +1,7 @@
+version: 1.0.0
+files:
+  - url: https://example.com/latest.yml
+    sha512: ""
+    size: 0
+path: https://example.com/latest.yml
+releaseDate: "2026-05-01"

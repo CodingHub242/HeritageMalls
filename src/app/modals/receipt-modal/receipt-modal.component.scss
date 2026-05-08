@@ -1,0 +1,126 @@
+.receipt-content {
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 16px;
+
+  .store-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .store-address {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .receipt-meta {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.4;
+  }
+}
+
+.dashed-line {
+  border: none;
+  border-top: 1px dashed #ccc;
+  margin: 12px 0;
+}
+
+.receipt-items {
+  margin: 16px 0;
+
+  .items-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 11px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 8px;
+  }
+
+  .receipt-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 6px 0;
+    font-size: 12px;
+    line-height: 1.3;
+
+    .item-name {
+      flex: 2;
+      word-break: break-word;
+    }
+
+    .item-qty {
+      flex: 0 0 30px;
+      text-align: center;
+    }
+
+    .item-price,
+    .item-total {
+      flex: 0 0 60px;
+      text-align: right;
+    }
+  }
+}
+
+.receipt-summary {
+  margin: 16px 0;
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 12px;
+
+    &.total-row {
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #ccc;
+    }
+
+    .total-amount {
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+.receipt-footer {
+  text-align: center;
+  font-size: 10px;
+  color: #888;
+  margin-top: 16px;
+  line-height: 1.5;
+
+  p {
+    margin: 4px 0;
+  }
+
+  .receipt-note {
+    font-style: italic;
+    margin-top: 12px;
+    font-size: 9px;
+  }
+}
+
+.receipt-actions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

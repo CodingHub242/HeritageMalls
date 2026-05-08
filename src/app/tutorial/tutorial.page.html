@@ -1,0 +1,46 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="skipTutorial()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="book-outline" style="margin-right: 8px;"></ion-icon>
+      How to Use Heritage Mall
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="tutorial-container">
+    <div class="tutorial-header">
+     
+      <h1>Welcome to Heritage Mall</h1>
+      <p class="subtitle">Your complete inventory management solution</p>
+    </div>
+
+    <div class="steps-container">
+      <div class="step-card" *ngFor="let step of steps; let i = index">
+        <div class="step-number">
+          <span>{{ step.number }}</span>
+        </div>
+        <div class="step-content">
+          <div class="step-icon">
+            <ion-icon name="{{ step.icon }}"></ion-icon>
+          </div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tutorial-footer">
+      <ion-button expand="block" size="large" (click)="goToHome()" class="start-button">
+        <ion-icon name="rocket-outline" slot="start"></ion-icon>
+        Get Started
+      </ion-button>
+      <p class="skip-text" (click)="skipTutorial()">Skip tutorial</p>
+    </div>
+  </div>
+</ion-content>

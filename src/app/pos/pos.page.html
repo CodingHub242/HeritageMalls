@@ -1,0 +1,284 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+  
+    <ion-title>
+      Heritage Sales
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+   <div class="pos-container">
+      <ion-row style="width: 100%;">
+        <ion-col size="6">
+          <div class="tab">
+            <button class="tablinks" (click)="openCity($event, 'Scanner')">Scanner</button>
+            <button class="tablinks" (click)="openCity($event, 'Search')">Search</button>
+          </div>
+
+          <div id="Scanner" class="tabcontent">
+            <!-- Scan Section -->
+                  <div class="scan-section">
+                      <ion-card style="border-top:12px solid hsl(187deg 54.15% 25.12% / 73.3%);margin: 15px auto;display: block;align-items: center;max-width: 800px;text-align: center;">
+                          <ion-card-header>
+                              <ion-card-title style="font-weight: bolder;text-transform: uppercase;">Scan Item</ion-card-title>
+                          </ion-card-header>
+                          <ion-card-content>
+                              
+                              <!-- Continuous Scanner View -->
+                              <div *ngIf="isScanning" class="continuous-scanner">
+                                  <div class="scanner-container">
+                                      <div class="video-wrapper">
+                                          <!-- Video element for ZXing to attach to - MUST have id "pos-video-container" -->
+                                          <video id="pos-video-container" class="scanner-video"></video>
+                                          
+                                          <div class="scanner-overlay">
+                                              <div class="scan-frame">
+                                                  <div class="scan-corner tl"></div>
+                                                  <div class="scan-corner tr"></div>
+                                                  <div class="scan-corner bl"></div>
+                                                  <div class="scan-corner br"></div>
+                                              </div>
+                                              <div class="scan-line"></div>
+                                          </div>
+                                      </div>
+                                      
+                                      <!-- Scan Feedback - NEW -->
+                                      <div *ngIf="scanFeedback" class="scan-feedback">
+                                          <ion-icon name="checkmark-circle" color="success"></ion-icon>
+                                          <span>{{ scanFeedback }}</span>
+                                      </div>
+                                      
+                                      <div class="scanner-status">
+                                          <ion-spinner name="dots" color="success"></ion-spinner>
+                                          <p>Scanning for barcode...</p>
+                                          <small>Point the barcode within the frame</small>
+                                      </div>
+
+                                      <div *ngIf="scanError" class="error-message">
+                                          <ion-icon name="alert-circle" color="danger"></ion-icon>
+                                          <span>{{ scanError }}</span>
+                                      </div>
+                                  </div>
+
+                                  <ion-button fill="outline" size="small" (click)="toggleCamera()" class="camera-toggle-button">
+                                      <ion-icon name="camera-reverse" slot="start"></ion-icon>
+                                      {{ useFrontCamera ? 'Front' : 'Back' }} Camera
+                                  </ion-button>
+                                  
+                                  <ion-button expand="block" fill="outline" color="danger" (click)="stopScan()" class="scan-button">
+                                      <ion-icon name="square" slot="start"></ion-icon>
+                                      Stop Scanning
+                                  </ion-button>
+                              </div>
+
+                              <!-- Idle Scanner View -->
+                              <div *ngIf="!isScanning">
+                                  <p class="scan-instructions">
+                                      Point your device's camera at a barcode to scan and add items to your cart
+                                  </p>
+                                  
+                                  <!-- Camera Toggle Button -->
+                                  <ion-button fill="outline" size="small" (click)="toggleCamera()" class="camera-toggle-button">
+                                      <ion-icon name="camera-reverse" slot="start"></ion-icon>
+                                      {{ useFrontCamera ? 'Front' : 'Back' }} Camera
+                                  </ion-button>
+                                  <br><br>
+                                  
+                                  <ion-button expand="block" color="primary" (click)="scanBarcode()" style="margin: 0 auto;">
+                                      <ion-icon name="barcode-outline" slot="start"></ion-icon>
+                                      Start Continuous Scan
+                                  </ion-button>
+                              </div>
+                          </ion-card-content>
+                      </ion-card>
+                  </div>
+          </div>
+
+          <div id="Search" class="tabcontent">
+          <!-- Search Section -->
+                  <ion-card style="border-top:12px solid hsl(187deg 54.15% 25.12% / 73.3%);margin: 15px auto;display: block;align-items: center;max-width: 800px;text-align: center;">
+                      <ion-card-header>
+                          <ion-card-title style="font-weight: bolder;text-transform: uppercase;">Search Items</ion-card-title>
+                      </ion-card-header>
+                      <ion-card-content>
+                          <!-- Search Input -->
+                          <ion-item>
+                              <!-- <ion-label position="floating">Search Items</ion-label> -->
+                              <ion-input style="margin-top:20px;" 
+                                  type="text" 
+                                  [(ngModel)]="searchTerm"
+                                  (ionChange)="searchItems()"
+                                  placeholder="Type to add items..."
+                                  clearInput>
+                              </ion-input>
+                          </ion-item>
+                          
+                          <!-- Search Results -->
+                          <div *ngIf="searchResults.length > 0; else noResults">
+                              <ion-list>
+                                  <ion-item *ngFor="let item of searchResults" (click)="selectItemFromSearch(item)" detail="false" style="cursor:pointer;">
+                                      <ion-label>
+                                          <h2>{{ item.name }}</h2>
+                                          <p *ngIf="item.description">{{ item.description }}</p>
+                                          <p>
+                                              <strong>Price:</strong> GHS{{ item.selling_price || item.price }} 
+                                              <span *ngIf="item.selling_price" class="price-note">(Cost: GHS{{ item.price }})</span>
+                                          </p>
+                                          <p *ngIf="item.quantity !== undefined">
+                                              <strong>In Stock:</strong> {{ item.quantity }}
+                                          </p>
+                                      </ion-label>
+                                  </ion-item>
+                              </ion-list>
+                          </div>
+                          
+                          <ng-template #noResults>
+                              <div *ngIf="searchTerm && searchTerm.length > 0" class="no-results">
+                                  <p>No items found matching "{{ searchTerm }}"</p>
+                              </div>
+                              <div *ngIf="!searchTerm || searchTerm.length === 0" class="no-results">
+                                  <p>Start typing to search for items</p>
+                              </div>
+                          </ng-template>
+                          
+                          <!-- Loading Indicator -->
+                          <div *ngIf="isSearching" class="search-loading">
+                              <ion-spinner name="dots"></ion-spinner>
+                              <p>Searching...</p>
+                          </div>
+                      </ion-card-content>
+                  </ion-card>
+          </div>
+           
+        </ion-col>
+
+        <ion-col size="6">
+          <!-- Current Item Section - Shows last scanned item with quick adjust -->
+          <!-- <div *ngIf="scannedItem" class="current-item">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Last Scanned</ion-card-title>
+                <ion-card-subtitle>
+                  {{ scannedItem.name }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="current-item-price">
+                  <span class="price-label">Price:</span>
+                  <span class="price-value">GHS{{ scannedItem.selling_price || scannedItem.price }}</span>
+                  <span *ngIf="scannedItem.selling_price" class="cost-price">(Cost: GHS{{ scannedItem.price }})</span>
+                </div>
+                
+                <p class="stock-info">In stock: {{ scannedItem.quantity }}</p>
+                
+                <div class="quick-adjust">
+                  <span class="adjust-label">Quick Adjust Quantity in Cart:</span>
+                  <div class="quantity-controls">
+                    <ion-button fill="clear" size="small" (click)="decreaseCartQuantity()" [disabled]="getCartQuantity() <= 1">
+                      <ion-icon name="remove-outline"></ion-icon>
+                    </ion-button>
+                    <span class="quantity-display">{{ getCartQuantity() }}</span>
+                    <ion-button fill="clear" size="small" (click)="increaseCartQuantity()" [disabled]="getCartQuantity() >= scannedItem.quantity">
+                      <ion-icon name="add-outline"></ion-icon>
+                    </ion-button>
+                  </div>
+                  <p *ngIf="getCartQuantity() >= scannedItem.quantity" class="warning-text">
+                    Max stock reached
+                  </p>
+                </div>
+
+                <div class="action-buttons">
+                  <ion-button expand="block" color="danger" fill="outline" (click)="removeFromCartById(scannedItem.id)">
+                    <ion-icon name="trash-outline" slot="start"></ion-icon>
+                    Remove from Cart
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div> -->
+
+          <!-- Cart Section - UPDATED with editable quantities -->
+          <div class="cart-section">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Shopping Cart ({{ cartItems.length }} items)</ion-card-title>
+              </ion-card-header>
+              <ion-card-content  *ngIf="cartItems.length > 0">
+                <ion-list>
+                  <ion-item *ngFor="let item of cartItems; let i = index" sliding>
+                    <ion-label>
+                      <h2>{{ item.item.name }}</h2>
+                      <p>GHS{{ item.unit_price }} each</p>
+                    </ion-label>
+                    <div class="cart-item-controls">
+                      <ion-button fill="clear" size="small" (click)="item.item.id && updateCartItemQuantity(item.item.id, item.quantity - 1)" [disabled]="item.quantity <= 1">
+                        <ion-icon name="remove-outline"></ion-icon>
+                      </ion-button>
+                      <ion-input 
+                        type="number" 
+                        min="1" 
+                        [max]="item.item.quantity"
+                        [value]="item.quantity"
+                        (ionChange)="onQuantityChange(item.item.id, $event)"
+                        class="quantity-input">
+                      </ion-input>
+                      <ion-button fill="clear" size="small" (click)="item.item.id && updateCartItemQuantity(item.item.id, item.quantity + 1)" [disabled]="item.quantity >= item.item.quantity">
+                        <ion-icon name="add-outline"></ion-icon>
+                      </ion-button>
+                    </div>
+                    <div class="item-total">
+                      GHS{{ item.total_price }}
+                    </div>
+                    <ion-item-options side="end">
+                      <ion-item-option color="danger" (click)="removeFromCart(i)">
+                        <ion-icon name="trash-outline"></ion-icon>
+                        Remove
+                      </ion-item-option>
+                    </ion-item-options>
+                  </ion-item>
+                </ion-list>
+                
+                <div class="cart-total">
+                  <div>Total: <strong>GHS{{ totalAmount.toFixed(2) }}</strong></div>
+                </div>
+              </ion-card-content>
+
+              <ion-card-content *ngIf="cartItems.length === 0" class="empty-cart" style="padding: 150px;text-align: center;">
+                <p style="font-size: 17px;">Your cart is empty. Scan items to add them here.</p>
+              </ion-card-content>
+            </ion-card>
+          </div>
+
+          <!-- Action Buttons -->
+          <div *ngIf="cartItems.length > 0" class="action-buttons" style=" background: #ffffff;padding: 20px;border-radius: 10px;margin: auto 0;justify-content: center;">
+            <ion-button expand="block" (click)="completeSale()" [disabled]="isProcessing" style="background: hsl(187, 52%, 16%);color:#fff;">
+              <ion-icon *ngIf="isProcessing" name="refresh-outline"></ion-icon>
+              <span *ngIf="!isProcessing">Complete Sale</span>
+              <span *ngIf="isProcessing">Processing...</span>
+            </ion-button>
+            
+            <ion-button expand="block" color="medium" (click)="clearCart()">
+              <ion-icon name="trash-outline"></ion-icon>
+              Clear Cart
+            </ion-button>
+
+            <ion-button 
+              expand="block" 
+              [color]="isScanning ? 'danger' : 'dark'" 
+              (click)="toggleScanning()">
+              <ion-icon [name]="isScanning ? 'pause-outline' : 'play-outline'" slot="start"></ion-icon>
+              {{ isScanning ? 'Pause Scanning' : 'Resume Scanning' }}
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    
+   </div>
+</ion-content>

@@ -1,0 +1,118 @@
+ion-content {
+  --background: #f4f5f8;
+  --color:#000;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+  color: #000;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  ion-avatar {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 12px;
+    border: 3px solid var(--ion-color-primary);
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+    color: #000;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #666;
+    margin: 4px 0 0;
+  }
+}
+
+ion-list {
+  background: transparent;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+ion-list-header {
+  ion-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+  }
+}
+
+ion-item {
+  --background: #fff;
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  margin-bottom: 8px;
+  --color: #000;
+  ion-icon {
+    color: var(--ion-color-primary);
+    margin-right: 16px;
+  }
+
+  ion-label {
+    font-weight: 500;
+    color: #000;
+  }
+}
+
+// Dark theme overrides for settings page
+:host-context(body.dark) {
+  .profile-header {
+    h2, p {
+      color: #111;
+    }
+  }
+
+  ion-list-header ion-label {
+    color: #111;
+  }
+
+  ion-item ion-label {
+    color: #111;
+  }
+
+  // Keep danger color for logout
+  ion-item ion-label[color="danger"] {
+    color: var(--ion-color-danger);
+  }
+
+  .message-text {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    display: block;
+  }
+
+  .activity-time {
+    font-size: 0.75rem;
+    color: #888;
+    margin: 0;
+  }
+
+  ion-item[button] ion-icon {
+    margin-right: 16px;
+  }
+}
+ion-input {
+  --background: #fff;
+  --color: #000;
+  placeholder-color: #888;
+  --border-color: #ccc;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 30px;
+}

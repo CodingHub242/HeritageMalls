@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Sale Receipt</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div id="receipt-content" class="receipt-content">
+    <!-- Receipt Header -->
+    <div class="receipt-header">
+      <div class="store-name">Heritage Mall</div>
+      <div class="store-address">Accra, Ghana</div>
+      <div class="receipt-meta">
+        <div>Date: {{ saleDate | date:'short' }}</div>
+        <div>Time: {{ saleDate | date:'shortTime' }}</div>
+        <div *ngIf="saleId">Sale #: {{ saleId | slice:0:8 }}</div>
+      </div>
+      <hr class="dashed-line">
+    </div>
+
+    <!-- Receipt Items -->
+    <div class="receipt-items">
+      <div class="items-header">
+        <span>Item</span>
+        <span>Qty</span>
+        <span>Price</span>
+        <span>Total</span>
+      </div>
+      <div class="receipt-item" *ngFor="let item of items">
+        <span class="item-name">{{ item.name }}</span>
+        <span class="item-qty">×{{ item.quantity }}</span>
+        <span class="item-price">GHS{{ item.unit_price | number:'1.2-2' }}</span>
+        <span class="item-total">GHS{{ item.total_price | number:'1.2-2' }}</span>
+      </div>
+      <hr class="dashed-line">
+    </div>
+
+    <!-- Receipt Total -->
+    <div class="receipt-summary">
+      <div class="summary-row total-row">
+        <span>TOTAL</span>
+        <span class="total-amount">GHS{{ totalAmount | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Payment Method</span>
+        <span>{{ paymentMethod | uppercase }}</span>
+      </div>
+    </div>
+
+    <hr class="dashed-line">
+
+    <!-- Receipt Footer -->
+    <div class="receipt-footer">
+      <p>Thank you for your purchase!</p>
+      <p>Please come again.</p>
+      <p class="receipt-note">A copy of this receipt is stored in your sales records.</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="receipt-actions">
+    <ion-button expand="block" (click)="printReceipt()" style="max-width: 230px;margin: 0 auto;background: #073336;color:#fff;--background:#073336;">
+      <ion-icon name="print-outline" slot="start"></ion-icon>
+      Print Receipt
+    </ion-button>
+    <ion-button expand="block" color="medium" (click)="dismiss()" style="max-width: 230px;margin: 0 auto;">
+      Close
+    </ion-button>
+  </div>
+</ion-content>

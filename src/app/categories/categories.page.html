@@ -1,0 +1,52 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>Categories</h1>
+      <p class="hero-description">Organize your inventory efficiently with custom categories</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <ion-icon name="folder-outline"></ion-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{categories?.length || 0}}</span>
+            <span class="stat-label">Total Categories</span>
+          </div>
+        </div>
+        <!-- Add more stats if needed -->
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <ion-icon name="library-outline" class="hero-icon"></ion-icon>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="categories-list-view">
+      <ion-list>
+        <ion-item *ngFor="let category of categories" detail="false" (click)="viewCategoryDetails(category.id)">
+          <ion-icon name="folder-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h2>{{ category.name }}</h2>
+            <p>{{ category.description }}</p>
+          </ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="maroon-fab" (click)="openAddCategoryModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

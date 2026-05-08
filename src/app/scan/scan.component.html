@@ -1,0 +1,41 @@
+<!-- <ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Scan Item
+    </ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Scan Item</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container">
+    <ion-card>
+      <ion-card-content>
+        <p>Point your camera at a barcode to scan an item.</p>
+        <ion-button expand="block" (click)="scanBarcode()">
+          <ion-icon name="camera"></ion-icon>
+          Scan Barcode
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="scannedItem">
+      <ion-card-header>
+        <ion-card-title>{{ scannedItem.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ scannedItem.description }}</p>
+        <p *ngIf="scannedItem.category">Category: {{ scannedItem.category.name }}</p>
+        <p *ngIf="scannedItem.barcode">Barcode: {{ scannedItem.barcode }}</p>
+        <ion-button expand="block" (click)="viewItemDetails(scannedItem.id)">
+          View Details
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

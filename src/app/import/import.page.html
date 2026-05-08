@@ -1,0 +1,215 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="hero-section">
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">Import Items</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <div class="hero-content">
+      <h1>Bulk Import</h1>
+      <p>Easily import your inventory from an Excel file.</p>
+    </div>
+  </div>
+
+  <div id="container">
+    <ion-card class="import-card">
+      <ion-card-header style="text-align: center;">
+        <ion-card-title>Import from Excel</ion-card-title>
+      </ion-card-header>
+      <ion-card-content style="text-align: center;">
+        <p>Select an Excel file to import items into the inventory.</p>
+        <!-- Drag and Drop Area -->
+        <div class="file-drop-area" 
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onFileDrop($event)"
+             [class.dragover]="isDragover">
+          <div class="drop-area-content">
+            <ion-icon name="cloud-upload-outline" size="large"></ion-icon>
+            <p>Drag & drop your file here</p>
+            <p>or</p>
+            <button type="button" (click)="fileInput.click()" class="browse-button">
+              Browse Files
+            </button>
+            <input type="file" 
+                   (change)="onFileSelected($event)" 
+                   accept=".xlsx,.xls,.csv"
+                   #fileInput hidden />
+          </div>
+          
+          <!-- File Info -->
+          <div *ngIf="selectedFile" class="file-info">
+            <div class="file-info-left">
+              <strong>{{ selectedFile.name }}</strong>
+              <span class="file-type">{{ getFileExtension(selectedFile.name) }}</span>
+            </div>
+            <div class="file-info-right">
+              <span class="file-size">{{ selectedFile.size | fileSize }}</span>
+              <span *ngIf="selectedFile.size > 5242880" class="size-warning">(Large file)</span>
+            </div>
+          </div>
+          
+          <!-- File Size Warning -->
+          <div *ngIf="selectedFile && selectedFile.size > 10485760" class="file-size-error">
+            File size exceeds 10MB limit. Please select a smaller file.
+          </div>
+          
+          <!-- File Type Warning -->
+          <div *ngIf="fileValidationError" class="file-type-error">
+            {{ fileValidationError }}
+          </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <div *ngIf="isPreviewing" class="preview-loading">
+          <ion-spinner name="dots"></ion-spinner>
+          <p>Previewing file...</p>
+        </div>
+        
+        <!-- Column Mapping Section -->
+        <div *ngIf="previewData.length > 0 && !isImporting" class="mapping-section">
+          <div class="section-header">
+            <h3>Column Mapping</h3>
+            <button ion-button outline (click)="downloadTemplate()" class="template-button">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Download Template
+            </button>
+          </div>
+          
+          <div class="mapping-instructions">
+            <p>Map your file columns to the required fields below:</p>
+          </div>
+          
+          <div class="mapping-table">
+            <div class="mapping-row" *ngFor="let header of headers">
+              <div class="mapping-label">
+                <strong>{{ header }}</strong>
+                <span *ngIf="suggestedMapping[header]" class="suggested-badge">
+                  Suggested: {{ suggestedMapping[header] }}
+                </span>
+              </div>
+              <div class="mapping-input">
+                <ion-select 
+                  [(ngModel)]="columnMapping[header]"
+                  (ionChange)="onColumnMappingChange()"
+                  placeholder="Select field type">
+                  <ion-select-option value="name">Name</ion-select-option>
+                  <ion-select-option value="barcode">Barcode</ion-select-option>
+                  <ion-select-option value="quantity">Quantity</ion-select-option>
+                  <ion-select-option value="price">Price</ion-select-option>
+                  <ion-select-option value="description">Description</ion-select-option>
+                  <ion-select-option value="category_id">Category ID</ion-select-option>
+                  <ion-select-option value="selling_price">Selling Price</ion-select-option>
+                  <ion-select-option value="currency">Currency</ion-select-option>
+                  <ion-select-option value="image_url">Image URL</ion-select-option>
+                  <ion-select-option value="">Skip Column</ion-select-option>
+                </ion-select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Preview Table -->
+          <div *ngIf="previewData.length > 0" class="preview-table-container">
+            <h4>Data Preview (First 10 rows)</h4>
+            <table class="preview-table">
+              <thead>
+                <tr>
+                  <th *ngFor="let header of headers">
+                    {{ header }}
+                    <span *ngIf="columnMapping[header]" class="mapped-indicator">
+                      → {{ columnMapping[header] }}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of previewData; let i = index">
+                  <td *ngFor="let header of headers">
+                    {{ row[columnMapping[header] || header] || '' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="preview-note" *ngIf="rawData.length > 11">
+              Showing 10 of {{ rawData.length - 1 }} data rows (excluding header)
+            </p>
+          </div>
+        </div>
+        
+        <!-- Import Button -->
+        <div *ngIf="previewData.length > 0 && !isImporting" class="import-actions">
+          <ion-button 
+            expand="block" 
+            (click)="importItems()" 
+            [disabled]="!canImport()"
+            class="import-button">
+            <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+            Start Import
+          </ion-button>
+          
+          <div *ngIf="isImporting" class="import-progress">
+            <ion-spinner name="dots"></ion-spinner>
+            <p>Importing... {{ getImportProgress() }}%</p>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="getImportProgress()"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Import Results -->
+        <div *ngIf="importResult" class="import-result-card">
+          <ion-card-header>
+            <ion-card-title>Import Result</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{ importResult.message }}</p>
+            <div *ngIf="importSuccessCount > 0 || importErrorCount > 0" class="import-stats">
+              <div class="stat-item">
+                <span class="stat-label">Successful:</span>
+                <span class="stat-value success">{{ importSuccessCount }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Failed:</span>
+                <span class="stat-value error">{{ importErrorCount }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Time:</span>
+                <span class="stat-value">{{ processingTime }}ms</span>
+              </div>
+            </div>
+            
+            <div *ngIf="importErrorCount > 0" class="error-actions">
+              <ion-button outline (click)="downloadErrorReport()" class="error-button">
+                <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                Download Error Report
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </div>
+        <!-- <ion-button style="--background:hsla(186, 45%, 9%, 0.733);color:white;" expand="block" (click)="importItems()" [disabled]="!selectedFile" class="import-button">
+          Import Items
+        </ion-button> -->
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="importResult" class="import-result-card">
+      <ion-card-header>
+        <ion-card-title>Import Result</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ importResult.message }}</p>
+        <p *ngIf="importResult.success" class="success-message">Successfully imported items!</p>
+        <p *ngIf="!importResult.success" class="error-message">Import failed. Please check the file format.</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -1,0 +1,331 @@
+<ion-header>
+  <ion-toolbar color="primary">
+     <ion-buttons slot="start" (click)="goBack()" style="background: #fff;padding: 8px;cursor: pointer;">
+        <ion-icon style="color: black;" name="arrow-back"></ion-icon>
+    </ion-buttons>
+    <ion-title>Admin Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+<ion-segment [value]="activeTab" (ionChange)="toggleTab($event.detail.value)">
+      <ion-segment-button value="users">
+        <ion-label>Users</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="activities">
+        <ion-label>Activities</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="sales">
+        <ion-label>Sales Breakdown</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Stats Cards -->
+  <ion-card *ngIf="activeTab === 'users'">
+    <ion-card-header>
+      <ion-card-title>User Statistics</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <div class="stat-card">
+              <h2>{{ stats.total }}</h2>
+              <p>Total Users</p>
+            </div>
+          </ion-col>
+          <ion-col>
+            <div class="stat-card admin">
+              <h2>{{ stats.admins }}</h2>
+              <p>Admins</p>
+            </div>
+          </ion-col>
+          <ion-col>
+            <div class="stat-card attendant">
+              <h2>{{ stats.attendants }}</h2>
+              <p>Attendants</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+<!-- Users Tab -->
+  <div *ngIf="activeTab === 'users'">
+    <!-- User Role Filter -->
+    <div class="user-filter-bar">
+      <ion-segment [value]="userRoleFilter" (ionChange)="toggleUserRoleFilter($event.detail.value)">
+        <ion-segment-button value="all">
+          <ion-label>All</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="admin">
+          <ion-label>Admins</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="attendant">
+          <ion-label>Attendants</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-row>
+          <ion-col>
+            <ion-card-title>
+              {{ userRoleFilter === 'all' ? 'All Users' : (userRoleFilter === 'admin' ? 'Admins' : 'Attendants') }}
+              <span class="user-count">({{ getFilteredUsers().length }})</span>
+            </ion-card-title>
+          </ion-col>
+          <ion-col class="ion-text-right">
+            <ion-button size="small" (click)="toggleCreateUserForm()">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Add User
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-card-header>
+
+      <!-- Create User Form -->
+      <ion-card-content *ngIf="showCreateUserForm">
+        <ion-item>
+          <ion-label position="floating">Name</ion-label>
+          <ion-input [(ngModel)]="newUser.name" type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input [(ngModel)]="newUser.email" type="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Password</ion-label>
+          <ion-input [(ngModel)]="newUser.password" type="password"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Role</ion-label>
+          <ion-select [(ngModel)]="newUser.role">
+            <ion-select-option value="attendant">Attendant</ion-select-option>
+            <ion-select-option value="admin">Admin</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-button expand="block" (click)="createUser()" [disabled]="loading">
+          <ion-spinner *ngIf="loading"></ion-spinner>
+          <span *ngIf="!loading">Create User</span>
+        </ion-button>
+      </ion-card-content>
+
+      <!-- Users List -->
+      <ion-list>
+        <ion-item *ngFor="let user of getFilteredUsers()">
+          <ion-avatar slot="start">
+            <ion-icon name="person"></ion-icon>
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ user.name }}</h2>
+            <p>{{ user.email }}</p>
+            <p class="role-badge" [class.admin]="user.role === 'admin'">
+              {{ user.role }}
+            </p>
+          </ion-label>
+          <ion-buttons slot="end" *ngIf="user.id !== currentUser?.id">
+            <ion-button (click)="updateUserRole(user, user.role === 'admin' ? 'attendant' : 'admin')">
+              <ion-icon slot="icon-only" name="key"></ion-icon>
+            </ion-button>
+            <ion-button color="danger" (click)="deleteUser(user)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+        <ion-item *ngIf="getFilteredUsers().length === 0">
+          <ion-label class="ion-text-center empty-state">
+            <ion-icon name="people"></ion-icon>
+            <p>No {{ userRoleFilter === 'all' ? 'users' : userRoleFilter + 's' }} found</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </div>
+
+  <!-- Activities Tab -->
+  <div *ngIf="activeTab === 'activities'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>All Activities</ion-card-title>
+      </ion-card-header>
+      <ion-list>
+        <ion-item *ngFor="let activity of activities" [class]="getActivityTypeClass(activity.type)">
+          <ion-icon slot="start" [name]="getActivityIcon(activity.type)"></ion-icon>
+          <ion-label>
+            <h2>{{ activity.item }}</h2>
+            <p>{{ activity.details }}</p>
+            <p class="activity-meta">
+              <span *ngIf="activity.user_name">{{ activity.user_name }} - </span>
+              {{ formatDate(activity.created_at) }}
+            </p>
+          </ion-label>
+          <ion-badge slot="end" [color]="activity.type === 'added' ? 'success' : activity.type === 'deleted' ? 'danger' : 'primary'">
+            {{ activity.type }}
+          </ion-badge>
+        </ion-item>
+        <ion-item *ngIf="activities.length === 0">
+          <ion-label class="ion-text-center">
+            No activities yet
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </div>
+
+  <!-- Sales Breakdown Tab -->
+  <div *ngIf="activeTab === 'sales'">
+    <div class="sales-reports-container">
+        <ion-row style="width: 100%;">
+          <ion-col size="12" size-md="6">
+              <!-- Daily Sales -->
+              <ion-card *ngIf="dailySales.length > 0">
+                <ion-card-header>
+                  <ion-card-title style="color: #fff;">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    Daily Sales
+                    <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ dailySales.length }} days</ion-badge>
+                  </ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <div class="chart-container">
+                    <canvas baseChart 
+                      [data]="dailyChartData"
+                      [options]="dailyChartOptions"
+                      [type]="dailyChartType">
+                    </canvas>
+                  </div>
+                  <ion-list>
+                    <ion-item *ngFor="let sale of dailySales">
+                      <ion-label>
+                        <h2>{{ sale.date }}</h2>
+                        <p><ion-icon name="cash-outline"></ion-icon> Total Sales: <strong>GHS{{ sale.total_sales | number:'1.2-2' }}</strong></p>
+                        <p><ion-icon name="bag-handle-outline"></ion-icon> Items Sold: <strong>{{ sale.total_items_sold }}</strong></p>
+                        <p><ion-icon name="receipt-outline"></ion-icon> Transactions: <strong>{{ sale.transactions }}</strong></p>
+                      </ion-label>
+                    </ion-item>
+                  </ion-list>
+                </ion-card-content>
+              </ion-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <!-- Monthly Sales -->
+            <ion-card *ngIf="monthlySales.length > 0">
+              <ion-card-header>
+                <ion-card-title style="color: #fff;">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  Monthly Sales
+                  <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ monthlySales.length }} months</ion-badge>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas baseChart 
+                    [data]="monthlyChartData"
+                    [options]="monthlyChartOptions"
+                    [type]="monthlyChartType">
+                  </canvas>
+                </div>
+                <ion-list>
+                  <ion-item *ngFor="let sale of monthlySales">
+                    <ion-label>
+                      <h2>{{ sale.month }}</h2>
+                      <p><ion-icon name="cash-outline"></ion-icon> Total Sales: <strong>GHS{{ sale.total_sales | number:'1.2-2' }}</strong></p>
+                      <p><ion-icon name="bag-handle-outline"></ion-icon> Items Sold: <strong>{{ sale.total_items_sold }}</strong></p>
+                      <p><ion-icon name="receipt-outline"></ion-icon> Transactions: <strong>{{ sale.transactions }}</strong></p>
+                    </ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <!-- Yearly Sales -->
+            <ion-card *ngIf="yearlySales.length > 0">
+              <ion-card-header>
+                <ion-card-title style="color: #fff;">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  Yearly Sales
+                  <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ yearlySales.length }} years</ion-badge>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas baseChart 
+                    [data]="yearlyChartData"
+                    [options]="yearlyChartOptions"
+                    [type]="yearlyChartType">
+                  </canvas>
+                </div>
+                <ion-list>
+                  <ion-item *ngFor="let sale of yearlySales">
+                    <ion-label>
+                      <h2>{{ sale.year }}</h2>
+                      <p><ion-icon name="cash-outline"></ion-icon> Total Sales: <strong>GHS{{ sale.total_sales | number:'1.2-2' }}</strong></p>
+                      <p><ion-icon name="bag-handle-outline"></ion-icon> Items Sold: <strong>{{ sale.total_items_sold }}</strong></p>
+                      <p><ion-icon name="receipt-outline"></ion-icon> Transactions: <strong>{{ sale.transactions }}</strong></p>
+                    </ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <!-- Item Breakdown -->
+            <ion-card *ngIf="itemBreakdown.length > 0">
+              <ion-card-header>
+                <ion-card-title style="color: #fff;">
+                  <ion-icon name="pie-chart-outline"></ion-icon>
+                  Item Breakdown (Top 5)
+                  <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ itemBreakdown.length }} items</ion-badge>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas baseChart 
+                    [data]="itemChartData"
+                    [options]="itemChartOptions"
+                    [type]="itemChartType">
+                  </canvas>
+                </div>
+                <ion-list>
+                  <ion-item *ngFor="let item of itemBreakdown">
+                    <ion-label>
+                      <h2>{{ item.itemName }}</h2>
+                      <p><ion-icon name="bag-handle-outline"></ion-icon> Total Sold: <strong>{{ item.totalSold }}</strong></p>
+                      <p><ion-icon name="cash-outline"></ion-icon> Total Revenue: <strong>GHS{{ item.totalRevenue | number:'1.2-2' }}</strong></p>
+                    </ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      <!-- Loading states -->
+      <div *ngIf="dailySales.length === 0 && monthlySales.length === 0 && yearlySales.length === 0 && itemBreakdown.length === 0">
+        <ion-card style="background: hsla(187, 52%, 26%, 0.733);color: #fff;">
+          <ion-card-header>
+            <ion-card-title style="color: #fff;">Loading Sales Reports...</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="loading-container">
+              <ion-spinner name="circles"></ion-spinner>
+              <p style="color: #fff;">Please wait while we load your sales data.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+</ion-content>

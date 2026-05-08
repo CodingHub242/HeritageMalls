@@ -1,0 +1,1169 @@
+:host {
+  --primary-color: hsla(187, 52%, 26%, 0.733);
+  --primary-color-solid: hsl(187, 52%, 26%);
+  --primary-light: hsla(187, 52%, 36%, 0.733);
+  --primary-dark: hsl(187, 52%, 16%);
+  --primary-contrast: #ffffff;
+  --gray-light: #f5f5f5;
+  --gray-medium: #e0e0e0;
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --success-color: hsl(142, 52%, 26%);
+  --danger-color: hsl(0, 52%, 26%);
+  --medium-color: #666;
+}
+
+.pos-container {
+  padding: 1rem;
+  max-width: 2000px;
+  margin: 0 auto;
+  background-color: var(--gray-light);
+  min-height: 100vh;
+}
+
+.scan-section {
+  margin-bottom: 2rem;
+  
+  ion-button {
+    --border-radius: 12px;
+    --padding-start: 1.5rem;
+    --padding-end: 1.5rem;
+    --height: 56px;
+    max-width: 210px;
+    font-size: 1.1rem;
+    --background: var(--primary-color);
+    --background-activated: var(--primary-light);
+    --background-hover: var(--primary-light);
+    color: var(--primary-contrast);
+    
+    ion-icon {
+      font-size: 1.4rem;
+    }
+  }
+  
+  .camera-toggle-button {
+    --background: var(--gray-light);
+    --color: var(--primary-color);
+    color: #000;
+    --border-color: hsla(187, 52%, 26%, 0.733);
+    font-weight: 500;
+    margin-bottom: 8px;
+    max-width: 210px;
+    
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Continuous Scanner Styles
+.continuous-scanner {
+  margin-bottom: 20px;
+}
+
+.scanner-container {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  background: #000;
+  border: 2px solid #333;
+
+  // Video wrapper
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: #000;
+    overflow: hidden;
+  }
+
+  // Video element for ZXing - MUST have id "pos-video-container"
+  #pos-video-container {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    background: #000 !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 2;
+    position: relative;
+  }
+
+  // Fallback background when camera is not available
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    z-index: 1;
+  }
+
+  // Scanner overlay (above video, below corners)
+  .scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  // Scan frame (focus area)
+  .scan-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    border: 2px solid transparent;
+
+    .scan-corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: #00ff00;
+      border-style: solid;
+      z-index: 4;
+
+      &.tl {
+        top: -2px;
+        left: -2px;
+        border-width: 4px 0 0 4px;
+        border-radius: 8px 0 0 0;
+        box-shadow: -2px -2px 10px rgba(0, 255, 0, 0.3);
+      }
+
+      &.tr {
+        top: -2px;
+        right: -2px;
+        border-width: 4px 4px 0 0;
+        border-radius: 0 8px 0 0;
+        box-shadow: 2px -2px 10px rgba(0, 255, 0, 0.3);
+      }
+
+      &.bl {
+        bottom: -2px;
+        left: -2px;
+        border-width: 0 0 4px 4px;
+        border-radius: 0 0 0 8px;
+        box-shadow: -2px 2px 10px rgba(0, 255, 0, 0.3);
+      }
+
+      &.br {
+        bottom: -2px;
+        right: -2px;
+        border-width: 0 4px 4px 0;
+        border-radius: 0 0 8px 0;
+        box-shadow: 2px 2px 10px rgba(0, 255, 0, 0.3);
+      }
+    }
+  }
+
+  // Scan line animation
+  .scan-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff00, transparent);
+    animation: scan 2s linear infinite;
+    box-shadow: 0 0 15px #00ff00, 0 0 30px rgba(0, 255, 0, 0.5);
+    z-index: 4;
+  }
+}
+
+@keyframes scan {
+  0% {
+    top: 30%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 70%;
+    opacity: 0;
+  }
+}
+
+// Scan Feedback - NEW
+.scan-feedback {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 255, 0, 0.9);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+// Scanner Status
+.scanner-status {
+  text-align: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  margin-top: 16px;
+  color: #fff;
+
+  ion-spinner {
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #00ff00;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  }
+
+  small {
+    color: #aaa;
+  }
+}
+
+// Error Message
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 16px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  color: var(--ion-color-danger);
+  font-size: 0.9rem;
+
+  ion-icon {
+    flex-shrink: 0;
+  }
+}
+
+.scan-button {
+  --background: hsla(186, 49%, 8%, 0.733);
+  --background-activated: var(--ion-color-primary-shade);
+  --color: #fff;
+  font-weight: 600;
+  margin-top: 16px;
+  max-width: 210px;
+  margin: 15px auto;
+}
+
+.camera-toggle-button {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+  font-weight: 500;
+  --border-color: hsla(186, 49%, 8%, 0.733);
+  margin-top: 8px;
+  max-width: 200px;
+}
+
+// Camera not available message
+.camera-unavailable {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  
+  ion-icon {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    margin: 8px 0;
+  }
+}
+
+.current-item {
+  margin-bottom: 2rem;
+  
+  ion-card {
+    --border-radius: 16px;
+    --box-shadow: var(--card-shadow);
+    background-color: var(--primary-contrast);
+    border-left: 4px solid var(--primary-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    ion-card-header {
+      --border-radius: 16px 16px 0 0;
+      --padding-start: 1.5rem;
+      --padding-end: 1.5rem;
+      --padding-top: 1.25rem;
+      --padding-bottom: 1rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      
+      ion-card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-contrast);
+        letter-spacing: 0.5px;
+      }
+      
+      ion-card-subtitle {
+        font-size: 1.2rem;
+        color: var(--primary-contrast);
+        font-weight: 500;
+        opacity: 0.95;
+        
+        .original-price {
+          display: block;
+          font-size: 0.85rem;
+          opacity: 0.7;
+          text-decoration: line-through;
+          margin-top: 4px;
+          font-weight: 400;
+        }
+      }
+    }
+    
+    ion-card-content {
+      --padding-start: 1.5rem;
+      --padding-end: 1.5rem;
+      --padding-bottom: 1.5rem;
+      
+      p {
+        margin: 0.5rem 0;
+        color: #666;
+        font-size: 1rem;
+        line-height: 1.5;
+        
+        &:first-child {
+          font-weight: 600;
+          color: var(--primary-color);
+        }
+      }
+      
+      .current-item-price {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: linear-gradient(135deg, #f8f9fa, #f0f0f0);
+        border-radius: 12px;
+        border: 1px solid var(--gray-medium);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+
+        .price-label {
+          font-size: 0.85rem;
+          color: var(--medium-color);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 600;
+        }
+
+        .price-value {
+          font-size: 1.6rem;
+          font-weight: 800;
+          color: var(--primary-color);
+          text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+        }
+
+        .cost-price {
+          font-size: 0.9rem;
+          color: var(--medium-color);
+          text-decoration: line-through;
+          margin-left: auto;
+        }
+      }
+      
+      .stock-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.95rem;
+        color: var(--medium-color);
+        margin-bottom: 1rem;
+        font-weight: 500;
+
+        ion-icon {
+          color: var(--success-color);
+          font-size: 1.2rem;
+        }
+      }
+      
+      .quick-adjust {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--gray-light);
+        border-radius: 12px;
+
+        .adjust-label {
+          display: block;
+          font-size: 0.85rem;
+          color: var(--medium-color);
+          text-transform: uppercase;
+          margin-bottom: 12px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+        }
+
+        .quantity-controls {
+          display: inline-flex;
+          align-items: center;
+          gap: 1.25rem;
+          background: #fff;
+          border-radius: 50px;
+          padding: 6px 16px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          border: 1px solid var(--gray-medium);
+
+          ion-button {
+            --padding-start: 12px;
+            --padding-end: 12px;
+            --background: var(--primary-color);
+            --background-activated: var(--primary-light);
+            --background-hover: var(--primary-light);
+            color: var(--primary-contrast);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            max-width: 210px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            
+            ion-icon {
+              font-size: 1.3rem;
+            }
+            
+            &:active {
+              transform: scale(0.95);
+            }
+          }
+          
+          .quantity-display {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+          }
+        }
+        
+        .warning-text {
+          color: var(--danger-color);
+          font-size: 0.9rem;
+          margin-top: 0.75rem;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 1.5rem;
+        background: rgb(153, 153, 155);
+        padding: 20px;
+        border-radius: 10px;
+
+        ion-button {
+          --border-radius: 12px;
+          --height: 52px;
+          font-weight: 600;
+          font-size: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          max-width: 210px;
+          ion-icon {
+            font-size: 1.3rem;
+          }
+
+          &:first-child {
+            --background: var(--danger-color);
+            --background-activated: hsl(0, 52%, 36%);
+            --background-hover: hsl(0, 52%, 36%);
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
+.cart-section {
+  margin-bottom: 2rem;
+  
+  ion-card {
+    --border-radius: 16px;
+    --box-shadow: var(--card-shadow);
+    background-color: var(--primary-contrast);
+    border-top: 4px solid var(--primary-color);
+    transition: transform 0.2s ease;
+    
+    ion-card-header {
+      --border-radius: 16px 16px 0 0;
+      --padding-start: 1.5rem;
+      --padding-end: 1.5rem;
+      --padding-top: 1.25rem;
+      --padding-bottom: 1rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      
+      ion-card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-contrast);
+        letter-spacing: 0.5px;
+      }
+    }
+    
+    ion-card-content {
+      --padding-start: 0;
+      --padding-end: 0;
+      --padding-bottom: 1.5rem;
+      
+      ion-list {
+        --margin-start: 0;
+        --margin-end: 0;
+        
+        ion-item {
+          --border-radius: 12px;
+          --margin-start: 1.5rem;
+          --margin-end: 1.5rem;
+          --margin-top: 0.5rem;
+          --margin-bottom: 0.5rem;
+          --padding-start: 1rem;
+          --padding-end: 1rem;
+          background-color: var(--gray-light);
+          border: 1px solid transparent;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background-color: #f8f9fa;
+            border-color: var(--gray-medium);
+            transform: translateX(4px);
+          }
+          
+          ion-label {
+            h2 {
+              margin: 0 0 0.5rem;
+              font-size: 1.2rem;
+              font-weight: 700;
+              color: var(--primary-color);
+            }
+            
+            p {
+              margin: 0;
+              font-size: 1rem;
+              color: #666;
+              font-weight: 500;
+            }
+          }
+          
+          // Cart item controls - NEW
+          .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            
+            ion-button {
+              --padding: 8px;
+              --background: var(--primary-color);
+              --background-activated: var(--primary-light);
+              --background-hover: var(--primary-light);
+              color: var(--primary-contrast);
+              border-radius: 50%;
+              width: 32px;
+              height: 32px;
+              
+              ion-icon {
+                font-size: 1.2rem;
+              }
+            }
+            
+            .quantity-input {
+              flex: 1;
+              max-width: 80px;
+              text-align: center;
+              font-weight: 600;
+              font-size: 1.1rem;
+              color: var(--primary-color);
+              background: #fff;
+              border: 2px solid var(--gray-medium);
+              border-radius: 6px;
+              padding: 4px 8px;
+              
+              &:focus {
+                border-color: var(--primary-color);
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.2);
+              }
+            }
+          }
+          
+          .item-total {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-top: 4px;
+          }
+          
+          ion-item-options {
+            ion-item-option {
+              --background: var(--danger-color);
+              color: #fff;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+      
+      .cart-total {
+        --padding-start: 1.5rem;
+        --padding-end: 1.5rem;
+        --padding-top: 1.25rem;
+        --padding-bottom: 1.5rem;
+        --border-top: 2px solid var(--gray-medium);
+        background: linear-gradient(135deg, #f8f9fa, #f0f0f0);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 1.5rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        
+        div {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--primary-color);
+          
+          strong {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+          }
+        }
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: ghostwhite;
+  padding: 20px;
+  border-radius: 10px;
+  
+  ion-button {
+    --border-radius: 12px;
+    --height: 56px;
+    --padding-start: 1.5rem;
+    --padding-end: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    max-width: 210px;
+    ion-icon {
+      font-size: 1.4rem;
+    }
+    
+    &:first-child {
+      --background: var(--primary-color);
+      --background-activated: var(--primary-light);
+      --background-hover: var(--primary-light);
+      color: var(--primary-contrast);
+    }
+    
+    &:last-child {
+      --background: var(--gray-light);
+      --background-activated: var(--gray-medium);
+      --background-hover: var(--gray-medium);
+      color: var(--primary-color);
+      
+      ion-icon {
+        font-size: 1.4rem;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (min-width: 768px) {
+  .pos-container {
+    padding: 2rem;
+  }
+  
+  .scan-section {
+    margin-bottom: 3rem;
+    
+    ion-button {
+      --height: 64px;
+      font-size: 1.2rem;
+      --background: var(--primary-color);
+      --background-activated: var(--primary-light);
+      --background-hover: var(--primary-light);
+      color: var(--primary-contrast);
+      max-width: 210px;
+      ion-icon {
+        font-size: 1.6rem;
+      }
+    }
+    
+    .camera-toggle-button {
+      --height: 48px;
+      font-size: 1rem;
+      
+      ion-icon {
+        font-size: 1.4rem;
+      }
+    }
+  }
+  
+  .current-item {
+    margin-bottom: 3rem;
+    
+    ion-card {
+      ion-card-header {
+        --padding-start: 2rem;
+        --padding-end: 2rem;
+        --padding-top: 1.5rem;
+        --padding-bottom: 1.25rem;
+        background-color: var(--primary-color);
+        
+        ion-card-title {
+          font-size: 1.8rem;
+          color: var(--primary-contrast);
+        }
+        
+        ion-card-subtitle {
+          font-size: 1.4rem;
+          color: var(--primary-contrast);
+          opacity: 0.9;
+          
+          .original-price {
+            display: block;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            text-decoration: line-through;
+            margin-top: 4px;
+            font-weight: 400;
+          }
+        }
+      }
+      
+      ion-card-content {
+        --padding-start: 2rem;
+        --padding-end: 2rem;
+        --padding-bottom: 2rem;
+        
+        p {
+          margin: 0.75rem 0;
+          font-size: 1.1rem;
+          color: #666;
+          
+          &:first-child {
+            font-weight: 500;
+          }
+        }
+        
+        .quantity-controls {
+          gap: 1.5rem;
+          margin: 1.5rem 0;
+          
+          ion-button {
+            --width: 50px;
+            --height: 50px;
+            --background: var(--primary-color);
+            --background-activated: var(--primary-light);
+            --background-hover: var(--primary-light);
+            color: var(--primary-contrast);
+            max-width: 210px;
+            ion-icon {
+              font-size: 1.4rem;
+            }
+            
+            &:active {
+              --opacity: 1;
+            }
+          }
+          
+          span {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+          }
+        }
+        
+        .error-text {
+          color: var(--danger-color);
+          font-size: 1rem;
+        }
+
+        .warning-text {
+          color: var(--medium-color);
+          font-size: 0.9rem;
+          margin-top: 0.5rem;
+        }
+
+        .current-item-price {
+          margin: 1rem 0;
+          padding: 1rem;
+          border-radius: 8px;
+          background: var(--gray-light);
+
+          .price-label {
+            font-size: 0.85rem;
+          }
+          .price-value {
+            font-size: 1.4rem;
+          }
+          .cost-price {
+            font-size: 0.9rem;
+          }
+        }
+        
+        .stock-info {
+          font-size: 1rem;
+          margin-bottom: 1.25rem;
+
+          ion-icon {
+            font-size: 1.3rem;
+          }
+        }
+        
+        .quick-adjust {
+          margin: 1rem 0;
+
+          .adjust-label {
+            font-size: 0.85rem;
+          }
+
+          .quantity-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--gray-light);
+            border-radius: 8px;
+            padding: 4px 12px;
+
+            ion-button {
+              --padding-start: 8px;
+              --padding-end: 8px;
+              max-width: 210px;
+            }
+            
+            .quantity-display {
+              min-width: 40px;
+              text-align: center;
+              font-weight: 700;
+              font-size: 1.2rem;
+              color: var(--primary-color);
+            }
+          }
+        }
+        
+        .action-buttons {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 1.5rem;
+
+          ion-button {
+            --border-radius: 12px;
+            --height: 52px;
+            font-weight: 600;
+            font-size: 1rem;
+            max-width: 210px;
+
+            ion-icon {
+              font-size: 1.3rem;
+            }
+          }
+        }
+        
+        .current-item-price {
+          margin: 1rem 0;
+          padding: 1rem;
+          border-radius: 8px;
+          background: var(--gray-light);
+
+          .price-label {
+            font-size: 0.9rem;
+          }
+          .price-value {
+            font-size: 1.4rem;
+          }
+          .cost-price {
+            font-size: 0.9rem;
+          }
+        }
+        
+        .stock-info {
+          font-size: 1rem;
+          margin-bottom: 1.25rem;
+
+          ion-icon {
+            font-size: 1.3rem;
+          }
+        }
+        
+        .quick-adjust {
+          margin: 1.5rem 0;
+
+          .adjust-label {
+            font-size: 0.9rem;
+          }
+
+          .quantity-controls {
+            .quantity-display {
+              min-width: 50px;
+              font-size: 1.4rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .cart-section {
+    margin-bottom: 3rem;
+    
+    ion-card {
+      ion-card-header {
+        --padding-start: 2rem;
+        --padding-end: 2rem;
+        --padding-top: 1.5rem;
+        --padding-bottom: 1.25rem;
+        background-color: var(--primary-color);
+        
+        ion-card-title {
+          font-size: 1.5rem;
+          color: var(--primary-contrast);
+        }
+      }
+      
+      ion-card-content {
+        --padding-start: 0;
+        --padding-end: 0;
+        --padding-bottom: 2rem;
+        
+        ion-list {
+          ion-item {
+            --margin-start: 2rem;
+            --margin-end: 2rem;
+            --margin-top: 0.75rem;
+            --margin-bottom: 0.75rem;
+            --padding-start: 1.25rem;
+            --padding-end: 1.25rem;
+            background-color: var(--gray-light);
+            
+            ion-label {
+              h2 {
+                font-size: 1.4rem;
+                margin: 0 0 0.75rem;
+                color: var(--primary-color);
+                font-weight: 600;
+              }
+              
+              p {
+                font-size: 1.1rem;
+                color: #666;
+              }
+            }
+          }
+        }
+        
+        .cart-total {
+          --padding-start: 2rem;
+          --padding-end: 2rem;
+          --padding-top: 1.5rem;
+          --padding-bottom: 2rem;
+          --border-top: 1px solid var(--gray-medium);
+          
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          
+          div {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            
+            strong {
+              color: var(--primary-color);
+              font-size: 1.8rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .action-buttons {
+    flex-direction: row;
+    
+    ion-button {
+      --height: 64px;
+      --padding-start: 2rem;
+      --padding-end: 2rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      max-width: 210px;
+      
+      ion-icon {
+        font-size: 1.6rem;
+      }
+      
+      &:first-child {
+        --background: var(--primary-color);
+        --background-activated: var(--primary-light);
+        --background-hover: var(--primary-light);
+        color: var(--primary-contrast);
+        flex: 1;
+        margin-right: 1rem;
+      }
+      
+      &:last-child {
+        --background: var(--gray-light);
+        --background-activated: var(--gray-medium);
+        --background-hover: var(--gray-medium);
+        color: var(--primary-color);
+        
+        ion-icon {
+          font-size: 1.6rem;
+        }
+        
+        flex: 1;
+        margin-left: 1rem;
+      }
+    }
+  }
+  
+  .scan-control {
+    margin-top: 1.5rem;
+
+    ion-button {
+      --height: 64px;
+      font-size: 1.2rem;
+      max-width: 210px;
+      ion-icon {
+        font-size: 1.6rem;
+      }
+    }
+  }
+  
+  .scan-control {
+    margin-top: 1rem;
+    
+    ion-button {
+      --border-radius: 12px;
+      --height: 56px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      max-width: 210px;
+      ion-icon {
+        font-size: 1.4rem;
+      }
+    }
+  }
+
+  /* Search Tab Styles */
+  .search-loading {
+    text-align: center;
+    padding: 20px;
+    
+    ion-spinner {
+      margin-bottom: 10px;
+    }
+    
+    p {
+      color: #666;
+      font-size: 1rem;
+    }
+  }
+  
+  .no-results {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+    
+    p {
+      margin: 10px 0;
+    }
+  }
+}
+
+
+/* Style the tab */
+.tab {
+ overflow: hidden;
+ border: 1px solid #ccc;
+ background-color: #f1f1f1;
+
+ button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 20px;
+  text-align: center;
+  width: 50%;
+}
+}
+/* Style the buttons inside the tab */
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+ background-color: #ddd;
+}
+/* Create an active/current tablink class */
+.tab button.active {
+ background-color: #ccc;
+}
+/* Style the tab content */
+.tabcontent {
+ display: none;
+ padding: 6px 12px;
+ border: 1px solid #ccc;
+ border-top: none;
+}

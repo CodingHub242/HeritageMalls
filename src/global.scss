@@ -35,3 +35,163 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+:root {
+  --ion-color-primary: #3880ff;
+  --ion-color-secondary: #5260ff;
+  --ion-color-tertiary: #5260ff;
+  --app-background: #f4f5f8;
+  --card-background: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-radius: 12px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Ensure consistent base font size across platforms */
+  --ion-font-size-base: 16px;
+}
+
+/* Ensure consistent font sizing in Electron */
+html {
+  font-size: var(--ion-font-size-base);
+}
+
+body {
+  font-size: var(--ion-font-size-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent zooming in Electron */
+@media screen and (min-resolution: 192dpi) {
+  html {
+    zoom: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Modern card styling */
+ion-card {
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  background: var(--card-background);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: var(--spacing-md);
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+/* List item styling */
+ion-item {
+  --padding-start: var(--spacing-md);
+  --padding-end: var(--spacing-md);
+  --padding-top: var(--spacing-sm);
+  --padding-bottom: var(--spacing-sm);
+  --border-radius: var(--border-radius);
+  margin: var(--spacing-xs) 0;
+
+  h2 {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin: var(--spacing-xs) 0;
+  }
+}
+
+/* Button styling */
+ion-button {
+  --border-radius: var(--border-radius);
+  font-weight: 600;
+  text-transform: none;
+  
+  &.button-solid {
+    --box-shadow: none;
+  }
+}
+
+/* Toolbar styling */
+ion-toolbar {
+  --background: var(--card-background);
+  --border-width: 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  ion-title {
+    font-weight: 600;
+  }
+}
+
+/* Content area styling */
+ion-content {
+  --background: var(--app-background);
+}
+
+/* FAB button styling */
+ion-fab-button {
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Form styling */
+ion-input, ion-textarea {
+  --padding-start: var(--spacing-md);
+  --padding-end: var(--spacing-md);
+  --padding-top: var(--spacing-sm);
+  --padding-bottom: var(--spacing-sm);
+  --border-radius: var(--border-radius);
+  --background: var(--card-background);
+  margin: var(--spacing-xs) 0;
+}
+
+/* Alert styling */
+.alert-wrapper {
+  --border-radius: var(--border-radius);
+}
+
+/* Badge styling */
+ion-badge {
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+/* Responsive grid */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+/* Dark mode adjustments */
+body.dark {
+  --app-background: #121212;
+  --card-background: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --ion-color-primary: #42a5f5;
+  --ion-color-secondary: #5260ff;
+  --ion-color-tertiary: #6a64ff;
+}
+
+/* Mobile optimizations */
+@media (max-width: 576px) {
+  ion-card {
+    margin: var(--spacing-sm);
+  }
+
+  .responsive-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+}

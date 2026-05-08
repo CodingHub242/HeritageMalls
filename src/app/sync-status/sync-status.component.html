@@ -1,0 +1,29 @@
+<ion-toolbar>
+  <ion-title>Sync Status</ion-title>
+  <ion-buttons slot="end">
+    <ion-button (click)="sync()" [disabled]="isSyncing">
+      <ion-icon name="sync"></ion-icon>
+      <span *ngIf="!isSyncing">Sync</span>
+      <span *ngIf="isSyncing">Syncing...</span>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-list>
+  <ion-item>
+    <ion-label>Connection Status</ion-label>
+    <ion-badge [color]="online ? 'success' : 'danger'">
+      {{ online ? 'Online' : 'Offline' }}
+    </ion-badge>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label>Pending Sync Operations</ion-label>
+    <ion-badge color="warning">{{ pendingSyncCount }}</ion-badge>
+  </ion-item>
+  
+  <ion-item *ngIf="lastSyncTime">
+    <ion-label>Last Sync</ion-label>
+    <ion-note>{{ lastSyncTime | date:'medium' }}</ion-note>
+  </ion-item>
+</ion-list>

@@ -1,0 +1,294 @@
+page-receipts {
+  background: #f8f9fa;
+  min-height: 100vh;
+
+  // Header
+}
+//////////////////////////////////////////////////////////////////////////////////////
+ // Receipts Container
+  .receipts-container {
+    padding: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  // Summary Bar
+.receipt-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 12px;
+
+      .summary-label {
+        font-size: 11px;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+
+      .summary-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1a2a3a;
+      }
+    }
+
+    .summary-divider {
+      width: 1px;
+      height: 32px;
+      background: #e8e8e8;
+      margin: 0 8px;
+    }
+}
+
+ // Receipt Item Card
+  .receipt-item {
+    --background: #fff;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --inner-padding-end: 12px;
+    --min-height: 72px;
+    --border-radius: 12px;
+    --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    margin-bottom: 10px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    border: 1px solid #e8e8e8;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    ion-icon[name="receipt-outline"] {
+      font-size: 24px;
+      color: #1a2a3a;
+      background: #f1f3f5;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+    }
+
+    ion-label {
+      margin: 0;
+
+      h2 {
+        margin: 0 0 4px 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: #212529;
+      }
+
+      p {
+        margin: 0;
+        font-size: 12px;
+        color: #6c757d;
+      }
+    }
+
+    .item-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #195e79;
+      background: #e7f1ff;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+  }
+
+  // Amount Section
+  .amount-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+
+    .amount {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a2a3a;
+    }
+
+    .payment-method {
+      font-size: 10px;
+      font-weight: 600;
+      color: #28a745;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+  }
+
+  // Sliding Actions
+  ion-item-sliding {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+
+    ion-item-options {
+      ion-item-option {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 16px 12px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        ion-icon {
+          font-size: 18px;
+          margin-bottom: 4px;
+        }
+
+        &[color="primary"] {
+          background: #1a2a3a;
+        }
+
+        &[color="success"] {
+          background: #144e21;
+        }
+      }
+    }
+  }
+
+   // Search Wrapper
+  .search-wrapper {
+    padding: 16px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+
+    ion-searchbar {
+      --background: #f1f3f5;
+      --color: #212529;
+      --placeholder-color: #6c757d;
+      --clear-button-color: #495057;
+      --border-radius: 12px;
+      --box-shadow: none;
+      border-radius: 12px;
+
+      .searchbar-input {
+        background: transparent;
+        border-radius: 12px;
+        padding: 8px 16px;
+      }
+    }
+  }
+
+  // Loading State
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    padding: 40px 20px;
+
+    ion-spinner {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #6c757d;
+      font-weight: 500;
+    }
+  }
+
+  // Empty State
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    padding: 40px 20px;
+    text-align: center;
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+
+      ion-icon {
+        font-size: 36px;
+        color: #6c757d;
+      }
+    }
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #212529;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #6c757d;
+    }
+  }
+
+  // Receipt List
+  ion-list {
+    margin: 0;
+  }
+
+  
+  // Infinite Scroll
+  ion-infinite-scroll {
+    margin-top: 8px;
+  }
+   ion-header {
+    --background: #1a2a3a;
+    --border-color: transparent;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+    ion-toolbar {
+      --background: #1a2a3a;;
+      --border-color: #1a2a3a;;
+    }
+
+    ion-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #fff;
+    }
+
+    ion-buttons ion-button {
+      --color: rgba(255, 255, 255, 0.85);
+
+      &:hover {
+        --color: #fff;
+      }
+    }
+  }

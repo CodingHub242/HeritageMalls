@@ -1,0 +1,199 @@
+
+:host {
+  --primary-color: #3880ff;
+  --secondary-color: #3dc2ff;
+  --text-light: #ffffff;
+  --text-dark: #1f2937;
+  --background-light: #f3f4f6;
+}
+ion-avatar{
+    width: 100px;
+    height: 100px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background: white;
+    margin: auto;
+}
+.hero-section {
+  position: relative;
+  min-height: 80vh;
+  background: linear-gradient(135deg,#27151e,#2d7079);
+//  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-light);
+  overflow: hidden;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  text-align: center;
+  z-index: 2;
+  position: relative;
+}
+
+.hero-content h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.main-cta {
+  --background: #fff;
+  --color: #000;
+  font-weight: 600;
+  font-size: 1.1rem;
+  height: 48px;
+}
+
+.secondary-cta {
+  --color: #fff;
+  --border-color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  height: 48px;
+}
+
+.wave-container {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+}
+
+.features-section {
+  padding: 4rem 2rem;
+  background: var(--background-light);
+  margin-top: -30px;;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.section-title p {
+  font-size: 1.2rem;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card ion-icon {
+  font-size: 3rem;
+  color: hsl(187, 51%, 26%);
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.get-started-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+}
+
+.get-started-section h2 {
+  font-size: 2rem;
+  color: #000;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.get-started-section p {
+  color: #6b7280;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+}
+
+.get-started-btn {
+  --background: hsl(187, 51%, 26%);
+  --color:#fff;
+  height: 48px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    padding: 0 2rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+
+  .section-title h2 {
+    font-size: 2rem;
+  }
+
+  .feature-card {
+    margin: 0 1rem;
+  }
+}

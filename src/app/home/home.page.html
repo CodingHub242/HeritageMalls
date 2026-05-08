@@ -1,20 +1,133 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Inventory Dashboard
     </ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>{{currentUser.name}} Dashboard</h1>
+      <p class="hero-description">Monitor and manage your inventory system</p>
+    </div>
+    <div class="posbtn">
+      <button (click)="startSelling()">Start Selling</button>
+    </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <div *ngIf="currentUser.role === 'admin'" class="posbtn" style="margin-left: 10px;">
+      <button (click)="adminSide()">Admin Panel</button>
+    </div>
+    <div class="hero-decoration">
+      
+      <ion-icon name="bar-chart-outline" class="hero-icon"></ion-icon>
+    </div>
   </div>
+
+  <div class="dashboard">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-label">Total Items</div>
+        <div class="stat-value">{{ stats.totalItems }}</div>
+        <ion-icon name="cube-outline"></ion-icon>
+      </div>
+
+      <div class="stat-card low-stock">
+        <div class="stat-label">Low Stock Items</div>
+        <div class="stat-value">{{ stats.lowStock }}</div>
+        <ion-icon name="warning-outline"></ion-icon>
+      </div>
+
+      <div class="stat-card categories">
+        <div class="stat-label">Categories</div>
+        <div class="stat-value">{{ stats.categories }}</div>
+        <ion-icon name="folder-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-grid">
+      <ion-card routerLink="/items">
+        <ion-card-header>
+          <ion-icon name="list-outline"></ion-icon>
+          <ion-card-title>Items</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Manage your inventory items
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card routerLink="/categories">
+        <ion-card-header>
+          <ion-icon name="folder-outline"></ion-icon>
+          <ion-card-title>Categories</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Organize items by category
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card routerLink="/scan">
+        <ion-card-header>
+          <ion-icon name="scan-outline"></ion-icon>
+          <ion-card-title>Scan Items</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Quickly find items by barcode
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card routerLink="/import">
+        <ion-card-header>
+          <ion-icon name="download-outline"></ion-icon>
+          <ion-card-title>Import</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Import items from Excel
+        </ion-card-content>
+      </ion-card>
+
+       <ion-card routerLink="/receipts">
+        <ion-card-header>
+          <ion-icon name="download-outline"></ion-icon>
+          <ion-card-title>View Receipts</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          View All Receipts
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Recent Activity -->
+    <ion-card class="activity-card">
+      <ion-card-header>
+        <ion-card-title>Recent Activity</ion-card-title>
+      </ion-card-header>
+
+      <div class="activity-list">
+        <ion-item *ngFor="let activity of stats.recentActivity">
+         
+          <ion-icon [name]="getActivityIcon(activity.type)" 
+                   [color]="getActivityColor(activity.type)" 
+                   slot="start"></ion-icon>
+          <ion-label>
+            <h2>{{ activity.item }}</h2>
+            <p>{{activity.type}} on - {{ activity.time }}</p>
+          </ion-label>
+        </ion-item>
+      </div>
+    </ion-card>
+  </div>
+
+  <!-- Sync Status Toggle Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="toggleSyncStatus()" color="light" size="small">
+      <!-- <h3>View Sync Status</h3> -->
+      <ion-icon [name]="showSyncStatus ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <app-sync-status *ngIf="showSyncStatus"></app-sync-status>
 </ion-content>

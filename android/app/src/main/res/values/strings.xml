@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">benlee-Stocks</string>
+    <string name="title_activity_main">benlee-Stocks</string>
+    <string name="package_name">com.benlee.stocks</string>
+    <string name="custom_url_scheme">com.benlee.stocks</string>
+</resources>

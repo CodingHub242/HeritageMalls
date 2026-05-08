@@ -1,0 +1,84 @@
+
+
+<ion-content [fullscreen]="true" class="ion-padding">
+ 
+
+  <div class="login-container wrapper">
+     <div class="gradient"></div>
+    <video autoplay loop muted playsinline preload="auto" poster="../../assets/img/bg.mp4">
+      <source
+        src="../../assets/img/bg.mp4"
+        type="video/mp4"
+      />
+    </video>
+    <div class="login-card">
+      <div class="logo-container">
+        <ion-avatar>
+          <img alt="Silhouette of a person's head" src="../../assets/img/log.png" />
+        </ion-avatar>
+        <h1>Welcome Back</h1>
+        <p>Log in to your inventory dashboard</p>
+      </div>
+
+      <form (ngSubmit)="login()" #loginForm="ngForm" class="login-form">
+        <div class="form-group">
+          <ion-item class="custom-input">
+            <ion-label position="floating">Email Address</ion-label>
+            <ion-input 
+              type="email" 
+              name="email" 
+              [(ngModel)]="credentials.email" 
+              required>
+            </ion-input>
+          </ion-item>
+        </div>
+
+<div class="form-group">
+          <ion-item class="custom-input">
+            <ion-label position="floating">Password</ion-label>
+            <ion-input 
+              [type]="showPassword ? 'text' : 'password'" 
+              name="password" 
+              [(ngModel)]="credentials.password" 
+              required>
+            </ion-input>
+            <ion-icon 
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+              slot="end" 
+              class="password-toggle"
+              (click)="togglePassword()"
+              style="cursor: pointer; font-size: 20px; margin-top: 28px;">
+            </ion-icon>
+          </ion-item>
+        </div>
+
+        <div class="forgot-password">
+          <a href="#" (click)="$event.preventDefault()">Forgot password?</a>
+        </div>
+
+        <div class="button-container">
+          <ion-button 
+            expand="block" 
+            type="submit" 
+            class="login-button"
+            [disabled]="!loginForm.form.valid">
+            <ion-icon name="log-in-outline" slot="start"></ion-icon>
+            Sign In
+          </ion-button>
+        </div>
+      </form>
+
+      <div class="register-prompt">
+        <p>Don't have an account?</p>
+        <ion-button 
+          fill="clear" 
+          class="register-button"
+          (click)="goToRegister()">
+          Create Account
+        </ion-button>
+
+        <p style="text-align: center;cursor: pointer;" (click)="goToLanding()">Go back</p>
+      </div>
+    </div>
+  </div>
+</ion-content>

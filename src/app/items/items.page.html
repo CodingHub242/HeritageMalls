@@ -1,0 +1,60 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>Inventory Items</h1>
+      <p>Manage and track your inventory items with ease</p>
+    </div>
+  </div>
+
+  <ion-searchbar 
+    (ionInput)="filterItems($event)"
+    placeholder="Search items by name, category, or barcode..."
+    animated="true"
+  ></ion-searchbar>
+
+   <div class="items-list-view">
+     <ion-list>
+       <ion-item *ngFor="let item of filteredItems" detail="false" (click)="viewItemDetails(item.id)" lines="none">
+         <ion-thumbnail slot="start">
+           <img *ngIf="item.image_url" [src]="'https://benlee.codepps.online' + item.image_url" [alt]="item.name">
+           <!-- <ion-placeholder *ngIf="!item.image_url" shape="circle"></ion-placeholder> -->
+         </ion-thumbnail>
+         <ion-label>
+           <h2>{{ item.name }}</h2>
+           <p class="item-description">{{ item.description }}</p>
+           <div class="item-meta">
+             <div class="meta-item">
+               <ion-icon name="folder-outline" slot="start" *ngIf="item.category"></ion-icon>
+               <span *ngIf="item.category">{{ item.category.name }}</span>
+             </div>
+             <div class="meta-item">
+               <ion-icon name="cube-outline" slot="start"></ion-icon>
+               <span>{{ item.quantity }} in stock</span>
+             </div>
+             <div class="meta-item">
+               <ion-icon name="cash-outline" slot="start"></ion-icon>
+               <span>{{ item.price | currency:item.currency }}</span>
+             </div>
+           </div>
+         </ion-label>
+         <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
+       </ion-item>
+     </ion-list>
+   </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="--background:maroon;color:white;">
+    <ion-fab-button  style="--background:maroon;color:white;" (click)="addItem()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

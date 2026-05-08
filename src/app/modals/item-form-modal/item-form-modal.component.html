@@ -1,0 +1,99 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Edit Item' : 'Add New Item' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+    <div class="image-upload-section">
+      <div class="image-previews">
+        <div class="image-preview" *ngFor="let preview of imagePreviews; let i = index">
+          <img [src]="preview" [alt]="'Item preview ' + (i + 1)">
+          <ion-button fill="clear" class="remove-image" (click)="removeImage(i)">
+            <ion-icon name="close-circle"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="image-preview" *ngFor="let url of item?.image_urls || []; let i = index">
+          <img [src]="'https://benlee.codepps.online' + url" [alt]="'Item image'">
+          <ion-button fill="clear" class="remove-image" (click)="removeImage(i)">
+            <ion-icon name="close-circle"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+      <div class="upload-info" *ngIf="canAddMoreImages()">
+        <p class="upload-count">{{ imageFiles.length }}/{{ maxImages }} images</p>
+      </div>
+      <div class="upload-button" *ngIf="canAddMoreImages()">
+        <ion-button expand="block" color="medium" (click)="triggerImageUpload()">
+          <ion-icon name="images-outline" slot="start"></ion-icon>
+          Add Images
+        </ion-button>
+      </div>
+      <input #fileInput type="file" hidden accept="image/*" multiple (change)="onImageSelected($event)">
+    </div>
+
+    <ion-item>
+      <ion-label position="stacked">Name</ion-label>
+      <ion-input formControlName="name" placeholder="Enter item name"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Description</ion-label>
+      <ion-textarea formControlName="description" placeholder="Enter item description" rows="3"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Category</ion-label>
+      <ion-select formControlName="category_id" placeholder="Select category">
+        <ion-select-option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Barcode</ion-label>
+      <ion-input formControlName="barcode" placeholder="Enter barcode"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Quantity</ion-label>
+      <ion-input type="number" formControlName="quantity" placeholder="Enter quantity"></ion-input>
+    </ion-item>
+
+    <div class="price-section">
+      <ion-item>
+        <ion-label position="stacked">Cost Price</ion-label>
+        <ion-input type="number" formControlName="price" placeholder="Enter cost price"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Selling Price</ion-label>
+        <ion-input type="number" formControlName="selling_price" placeholder="Enter selling price (optional)"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Currency</ion-label>
+        <ion-select formControlName="currency" placeholder="Select currency">
+          <ion-select-option value="GHS">GHS</ion-select-option>
+          <ion-select-option value="USD">USD</ion-select-option>
+          <ion-select-option value="EUR">EUR</ion-select-option>
+          <ion-select-option value="GBP">GBP</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <div class="form-buttons">
+      <ion-button type="button" fill="outline" (click)="dismiss()" style="color:white;--color:white;">Cancel</ion-button>
+      <ion-button type="submit" [disabled]="!itemForm.valid">
+        {{ isEdit ? 'Update' : 'Add' }} Item
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -1,0 +1,140 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="hero-section">
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">Scan Item</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <div class="hero-content">
+      <h1>Scan To Add New Items</h1>
+      <p>Quickly add items to your inventory by scanning their barcodes.</p>
+    </div>
+  </div>
+
+  <div id="container">
+    <!-- Continuous Scanner View -->
+    <ion-card *ngIf="isScanning" class="scan-card scanner-active">
+      <ion-card-content style="text-align: center;">
+        <div class="scanner-container">
+          <div class="video-wrapper">
+            <!-- Video element for ZXing to attach to - MUST have id "video-container" -->
+            <video id="video-container" class="scanner-video"></video>
+            
+            <div class="scanner-overlay">
+              <div class="scan-frame">
+                <div class="scan-corner tl"></div>
+                <div class="scan-corner tr"></div>
+                <div class="scan-corner bl"></div>
+                <div class="scan-corner br"></div>
+              </div>
+              <div class="scan-line"></div>
+            </div>
+          </div>
+          
+          <div class="scanner-status">
+            <ion-spinner name="dots" color="success"></ion-spinner>
+            <p>Scanning for barcode...</p>
+            <small>Point the barcode within the frame</small>
+          </div>
+        </div>
+
+        <ion-button fill="outline" size="small" (click)="toggleCamera()" class="camera-toggle-button">
+          <ion-icon name="camera-reverse" slot="start"></ion-icon>
+          {{ useFrontCamera ? 'Front' : 'Back' }} Camera
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" color="danger" (click)="stopScan()" class="scan-button">
+          <ion-icon name="square" slot="start"></ion-icon>
+          Stop Scanning
+        </ion-button>
+
+        <div *ngIf="scanError" class="error-message">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ scanError }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Idle Scanner View -->
+    <ion-card *ngIf="!isScanning" class="scan-card">
+      <ion-card-content style="text-align: center;">
+        <p>Point your camera at a barcode to scan an item.</p>
+        
+        <!-- Camera Toggle Button -->
+        <ion-button fill="outline" size="small" (click)="toggleCamera()" class="camera-toggle-button">
+          <ion-icon name="camera-reverse" slot="start"></ion-icon>
+          {{ useFrontCamera ? 'Front' : 'Back' }} Camera
+        </ion-button>
+        <br><br>
+        
+        <ion-button style="--background:hsla(188, 44%, 7%, 0.733);color:white;" expand="block" (click)="startScan()" class="scan-button">
+          <ion-icon name="camera" slot="start"></ion-icon>
+          Start Scan
+        </ion-button>
+        
+        <!-- <ion-button expand="block" fill="outline" color="medium" (click)="useNativeScanner()" class="scan-button">
+          <ion-icon name="barcode" slot="start"></ion-icon>
+          Use Native Scanner
+        </ion-button> -->
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Scanned Item Display -->
+    <ion-card *ngIf="scannedItem" class="scanned-item-card">
+      <ion-card-header>
+        <ion-card-title>{{ scannedItem.name }}</ion-card-title>
+        <ion-card-subtitle *ngIf="scannedItem.category">{{ scannedItem.category.name }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="item-details">
+          <div class="detail-row" *ngIf="scannedItem.description">
+            <span class="detail-label">Description:</span>
+            <span class="detail-value">{{ scannedItem.description }}</span>
+          </div>
+          
+          <div class="detail-row" *ngIf="scannedItem.barcode">
+            <span class="detail-label">Barcode:</span>
+            <span class="detail-value barcode">{{ scannedItem.barcode }}</span>
+          </div>
+          
+          <div class="price-row">
+            <div class="price-box">
+              <span class="price-label">Cost Price</span>
+              <span class="price-value">{{ scannedItem.currency }} {{ scannedItem.price | number:'1.2-2' }}</span>
+            </div>
+            <div class="price-box" *ngIf="scannedItem.selling_price">
+              <span class="price-label">Selling Price</span>
+              <span class="price-value selling">{{ scannedItem.currency }} {{ scannedItem.selling_price | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          
+          <div class="stock-info">
+            <ion-icon name="cube-outline"></ion-icon>
+            <span>Stock: {{ scannedItem.quantity }} units</span>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <ion-button expand="block" (click)="viewItemDetails(scannedItem.id)" class="details-button">
+            <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+            View Full Details
+          </ion-button>
+          
+          <ion-button expand="block" fill="outline" color="medium" (click)="restartScan()" class="scan-again-button">
+            <ion-icon name="scan" slot="start"></ion-icon>
+            Scan Another Item
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

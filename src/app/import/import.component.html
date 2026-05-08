@@ -1,0 +1,41 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Import Items
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Import Items</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Import from Excel</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Select an Excel file to import items into the inventory.</p>
+        <input type="file" (change)="onFileSelected($event)" accept=".xlsx,.xls" />
+        <ion-button expand="block" (click)="importItems()" [disabled]="!selectedFile">
+          Import Items
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="importResult">
+      <ion-card-header>
+        <ion-card-title>Import Result</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ importResult.message }}</p>
+        <p *ngIf="importResult.success">Successfully imported items!</p>
+        <p *ngIf="!importResult.success">Import failed. Please check the file format.</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -1,3 +1,25 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-header class="ion-no-border">
+    <ion-toolbar *ngIf="router.url=='/home'">
+      <ion-title>
+        <ion-avatar>
+          <img alt="lgo" src="../../assets/img/log.png" />
+        </ion-avatar>
+      </ion-title>
+      <ion-buttons slot="end" *ngIf="isLoggedIn">
+        <div class="profile-section" (click)="presentPopover($event)">
+          <div class="profile-image">
+            <img [src]="user?.profilePicture || defaultProfileImage"
+                 [alt]="user?.name || 'User'"
+                 (error)="$event.target.src = defaultProfileImage">
+          </div>
+          <span class="user-name">{{ user?.name || 'User' }}</span>
+          <ion-icon name="caret-down-outline"></ion-icon>
+        </div>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-router-outlet></ion-router-outlet>
+  </ion-content>
 </ion-app>

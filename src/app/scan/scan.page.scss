@@ -1,0 +1,427 @@
+.hero-section {
+  background:linear-gradient(135deg, hsl(187, 51%, 26%), #000); // Maroon color
+  color: #ffffff;
+  padding: 48px 24px;
+  text-align: center;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+
+  .hero-content {
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+  }
+}
+
+#container {
+  padding: 16px;
+}
+
+.scan-card, .scanned-item-card {
+  margin-top: -32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.scanned-item-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+
+  ion-card-header {
+    --background: linear-gradient(135deg, #2f3847 0%, hsla(187, 52%, 26%, 0.9) 100%);
+    --color: #ffffff;
+    color: #fff;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+
+    ion-card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    ion-card-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.85;
+      margin-top: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  ion-card-content {
+    padding: 1.5rem;
+
+    .item-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--ion-color-medium);
+        font-weight: 600;
+      }
+
+      .detail-value {
+        font-size: 1rem;
+        color: var(--ion-color-dark);
+        line-height: 1.4;
+
+        &.barcode {
+          font-family: 'Courier New', monospace;
+          font-weight: 600;
+          color: var(--ion-color-primary);
+          background: rgba(var(--ion-color-primary-rgb), 0.05);
+          padding: 4px 8px;
+          border-radius: 4px;
+          display: inline-block;
+        }
+      }
+    }
+
+    .price-row {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+
+      .price-box {
+        flex: 1;
+        min-width: 140px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .price-label {
+          display: block;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--ion-color-medium);
+          margin-bottom: 4px;
+          font-weight: 600;
+        }
+
+        .price-value {
+          display: block;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--ion-color-dark);
+
+          &.selling {
+            color: var(--ion-color-success);
+          }
+        }
+      }
+    }
+
+    .stock-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(var(--ion-color-primary-rgb), 0.08);
+      border-radius: 8px;
+      margin: 1rem 0;
+      font-weight: 600;
+      color: var(--ion-color-primary);
+
+      ion-icon {
+        font-size: 1.2rem;
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 1.5rem;
+    }
+  }
+}
+
+// Scanner Active State
+.scanner-active {
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+// Scanner Container
+.scanner-container {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  background: #000;
+  border: 2px solid #333;
+
+  // Video wrapper
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: #000;
+    overflow: hidden;
+  }
+
+  // Video element for ZXing - MUST have id "video-container"
+  #video-container {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    background: #000 !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 2;
+    position: relative;
+  }
+
+  // Fallback background when camera is not available
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    z-index: 1;
+  }
+
+  // Scanner overlay (above video, below corners)
+  .scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  // Scan frame (focus area)
+  .scan-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    border: 2px solid transparent;
+
+    .scan-corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: #00ff00;
+      border-style: solid;
+      z-index: 4;
+
+      &.tl {
+        top: -2px;
+        left: -2px;
+        border-width: 4px 0 0 4px;
+        border-radius: 8px 0 0 0;
+        box-shadow: -2px -2px 10px rgba(0, 255, 0, 0.3);
+      }
+
+      &.tr {
+        top: -2px;
+        right: -2px;
+        border-width: 4px 4px 0 0;
+        border-radius: 0 8px 0 0;
+        box-shadow: 2px -2px 10px rgba(0, 255, 0, 0.3);
+      }
+
+      &.bl {
+        bottom: -2px;
+        left: -2px;
+        border-width: 0 0 4px 4px;
+        border-radius: 0 0 0 8px;
+        box-shadow: -2px 2px 10px rgba(0, 255, 0, 0.3);
+      }
+
+      &.br {
+        bottom: -2px;
+        right: -2px;
+        border-width: 0 4px 4px 0;
+        border-radius: 0 0 8px 0;
+        box-shadow: 2px 2px 10px rgba(0, 255, 0, 0.3);
+      }
+    }
+  }
+
+  // Scan line animation
+  .scan-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff00, transparent);
+    animation: scan 2s linear infinite;
+    box-shadow: 0 0 15px #00ff00, 0 0 30px rgba(0, 255, 0, 0.5);
+    z-index: 4;
+  }
+}
+
+@keyframes scan {
+  0% {
+    top: 30%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 70%;
+    opacity: 0;
+  }
+}
+
+// Scanner Status
+.scanner-status {
+  text-align: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  margin-top: 16px;
+  color: #fff;
+
+  ion-spinner {
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #00ff00;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  }
+
+  small {
+    color: #aaa;
+  }
+}
+
+// Error Message
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 16px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  color: var(--ion-color-danger);
+  font-size: 0.9rem;
+
+  ion-icon {
+    flex-shrink: 0;
+  }
+}
+
+.scan-button {
+  --background: hsla(186, 49%, 8%, 0.733);
+  --background-activated: var(--ion-color-primary-shade);
+  --color: #fff;
+  font-weight: 600;
+  margin-top: 16px;
+  max-width: 210px;
+  margin: 15px auto;
+}
+
+.camera-toggle-button {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+  font-weight: 500;
+  --border-color: hsla(186, 49%, 8%, 0.733);
+  margin-top: 8px;
+  max-width: 200px;
+}
+
+// Camera not available message
+.camera-unavailable {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  
+  ion-icon {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    margin: 8px 0;
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .scanner-container {
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .scan-frame {
+    width: 160px !important;
+    height: 160px !important;
+
+    .scan-corner {
+      width: 30px !important;
+      height: 30px !important;
+    }
+  }
+
+  .scan-line {
+    width: 140px !important;
+  }
+}

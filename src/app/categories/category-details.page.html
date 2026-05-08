@@ -1,0 +1,146 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/categories">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ category?.name || 'Category Details' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>{{ category?.name }}</h1>
+      <p class="hero-description">{{ category?.description }}</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <ion-icon name="cube-outline"></ion-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{items?.length || 0}}</span>
+            <span class="stat-label">Items in Category</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ion-searchbar 
+    (ionInput)="filterItems($event)"
+    placeholder="Search items by name or barcode..."
+    animated="true"
+  ></ion-searchbar>
+
+  <div class="items-list-view">
+    <ion-list>
+      <ng-container *ngFor="let item of filteredItems">
+        <ion-item *ngIf="!checkIsEditing(item.id)" lines="none" class="item-card">
+          <ion-label (click)="viewItemDetails(item.id)">
+            <div class="item-header">
+              <h2>{{ item.name }}</h2>
+              <ion-badge color="primary">{{ getCategoryName(item.category_id) }}</ion-badge>
+            </div>
+            <p class="item-barcode">{{ item.barcode }}</p>
+            <div class="item-details-grid">
+              <div class="detail-item">
+                <span class="detail-label">Price</span>
+                <span class="detail-value">{{ item.price | currency:item.currency }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Selling Price</span>
+                <span class="detail-value">{{ item.selling_price | currency:item.currency }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Quantity</span>
+                <span class="detail-value quantity-value">{{ item.quantity }}</span>
+              </div>
+            </div>
+          </ion-label>
+          <div class="item-actions">
+            <ion-button fill="clear" (click)="startEditing(item)">
+              <ion-icon name="create" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="danger" (click)="deleteItem(item)">
+              <ion-icon name="trash" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-item>
+
+        <!-- Edit Mode -->
+        <ion-item *ngIf="checkIsEditing(item.id)" lines="none" class="item-card edit-mode">
+          <ion-label>
+            <div class="edit-form">
+              <ion-item lines="full">
+                <ion-label position="stacked">Name</ion-label>
+                <ion-input 
+                  [value]="getEditedItem(item.id)?.name"
+                  (ionChange)="updateField(item.id, 'name', $event.detail.value)"
+                  placeholder="Item name"
+                ></ion-input>
+              </ion-item>
+
+              <ion-item lines="full">
+                <ion-label position="stacked">Category</ion-label>
+                <ion-select 
+                  [value]="getEditedItem(item.id)?.category_id"
+                  (ionChange)="updateField(item.id, 'category_id', $event.detail.value)"
+                  interface="popover"
+                >
+                  <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
+                    {{ cat.name }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-item lines="full">
+                <ion-label position="stacked">Price</ion-label>
+                <ion-input 
+                  type="number"
+                  [value]="getEditedItem(item.id)?.price"
+                  (ionChange)="updateField(item.id, 'price', $event.detail.value)"
+                  placeholder="Price"
+                ></ion-input>
+              </ion-item>
+
+              <ion-item lines="full">
+                <ion-label position="stacked">Selling Price</ion-label>
+                <ion-input 
+                  type="number"
+                  [value]="getEditedItem(item.id)?.selling_price"
+                  (ionChange)="updateField(item.id, 'selling_price', $event.detail.value)"
+                  placeholder="Selling price"
+                ></ion-input>
+              </ion-item>
+
+              <ion-item lines="full">
+                <ion-label position="stacked">Quantity</ion-label>
+                <ion-input 
+                  type="number"
+                  [value]="getEditedItem(item.id)?.quantity"
+                  (ionChange)="updateField(item.id, 'quantity', $event.detail.value)"
+                  placeholder="Quantity"
+                ></ion-input>
+              </ion-item>
+
+              <div class="edit-actions">
+                <ion-button fill="outline" (click)="cancelEditing(item)">
+                  Cancel
+                </ion-button>
+                <ion-button fill="solid" (click)="saveItem(item)">
+                  Save
+                </ion-button>
+              </div>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ng-container>
+    </ion-list>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredItems.length === 0">
+      <ion-icon name="cube-outline"></ion-icon>
+      <p>No items found in this category</p>
+    </div>
+  </div>
+</ion-content>

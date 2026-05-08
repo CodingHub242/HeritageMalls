@@ -1,0 +1,109 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="register-container">
+     <div class="gradient"></div>
+      <video autoplay loop muted playsinline preload="auto" poster="../../assets/img/bg.mp4">
+        <source
+          src="../../assets/img/bg.mp4"
+          type="video/mp4"
+        />
+      </video>
+    <div class="register-card">
+      <div class="logo-container">
+        <!-- <ion-avatar>
+          <img alt="lgo" src="../../assets/img/logo.png" />
+        </ion-avatar> -->
+        <h1>Create An Account</h1>
+        <p>Join the best inventory management platform</p>
+      </div>
+
+      <form (ngSubmit)="register()" #registerForm="ngForm" class="register-form">
+        <div class="form-group">
+          <ion-item class="custom-input">
+            <ion-label position="floating">Full Name</ion-label>
+            <ion-input 
+              type="text" 
+              name="name" 
+              [(ngModel)]="credentials.name" 
+              required>
+            </ion-input>
+          </ion-item>
+        </div>
+
+        <div class="form-group">
+          <ion-item class="custom-input">
+            <ion-label position="floating">Email Address</ion-label>
+            <ion-input 
+              type="email" 
+              name="email" 
+              [(ngModel)]="credentials.email" 
+              required>
+            </ion-input>
+          </ion-item>
+        </div>
+
+<div class="form-group">
+          <ion-item class="custom-input">
+            <ion-label position="floating">Password</ion-label>
+            <ion-input 
+              [type]="showPassword ? 'text' : 'password'" 
+              name="password" 
+              [(ngModel)]="credentials.password" 
+              required>
+            </ion-input>
+            <ion-icon 
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+              slot="end" 
+              class="password-toggle"
+              (click)="togglePassword()"
+              style="cursor: pointer; font-size: 20px; margin-top: 28px;">
+            </ion-icon>
+          </ion-item>
+        </div>
+
+        <div class="form-group">
+          <ion-item class="custom-input">
+            <ion-label position="floating">Confirm Password</ion-label>
+            <ion-input 
+              [type]="showPassword ? 'text' : 'password'" 
+              name="password_confirmation" 
+              [(ngModel)]="credentials.password_confirmation" 
+              required>
+            </ion-input>
+            <ion-icon 
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+              slot="end" 
+              class="password-toggle"
+              (click)="togglePassword()"
+              style="cursor: pointer; font-size: 20px; margin-top: 28px;">
+            </ion-icon>
+          </ion-item>
+        </div>
+
+        <div class="terms-privacy">
+          <p>By registering, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+        </div>
+
+        <div class="button-container">
+          <ion-button 
+            expand="block" 
+            type="submit" 
+            class="register-button"
+            [disabled]="!registerForm.form.valid">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Create Account
+          </ion-button>
+        </div>
+      </form>
+
+      <div class="login-prompt">
+        <p>Already have an account?</p>
+        <ion-button 
+          fill="clear" 
+          class="login-button"
+          (click)="goToLogin()">
+          Sign In
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
