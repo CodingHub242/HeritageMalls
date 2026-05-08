@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SalesReportsService } from '../services/sales-reports.service';
@@ -10,7 +10,6 @@ import { BaseChartDirective } from 'ng2-charts';
   selector: 'app-sales-reports',
   templateUrl: './sales-reports.page.html',
   styleUrls: ['./sales-reports.page.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: false
 })
 export class SalesReportsPage implements OnInit {
