@@ -7,7 +7,8 @@ import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, 
   IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonGrid, IonRow, IonCol,
   IonSearchbar, IonLabel, IonList, IonItem, IonBadge, IonSpinner, IonSelect, 
-  IonSelectOption, IonDatetime, AlertController, LoadingController
+  IonSelectOption, IonDatetime, AlertController, LoadingController,
+  IonicModule
 } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -23,7 +24,11 @@ interface SelectedItem {
   templateUrl: './add-to-sales.page.html',
   styleUrls: ['./add-to-sales.page.scss'],
   standalone: false,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [
+    CommonModule,
+    FormsModule,IonicModule
+  ]
 })
 export class AddToSalesPage implements OnInit {
   // Search
