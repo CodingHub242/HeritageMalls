@@ -179,7 +179,8 @@ async loadAllItems() {
 
   getTotalAmount(): number {
     return this.selectedItems.reduce((total, si) => {
-      return total + (si.item.price * si.quantity);
+      const price = si.item.selling_price ?? si.item.price;
+      return total + (price * si.quantity);
     }, 0);
   }
 
