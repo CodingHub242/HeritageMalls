@@ -72,7 +72,7 @@ export class SalesDetailPage implements OnInit {
 
     const headers = ['Item Name', 'Barcode', 'Quantity', 'Total Revenue (GHS)'];
     const rows = this.items.map(item => [
-      item.name || item.itemName || 'N/A',
+      item.itemName || item.name || 'Unknown Item',
       item.barcode || '',
       item.quantity.toString(),
       Number(item.total_revenue).toFixed(2)

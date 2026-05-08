@@ -47,7 +47,7 @@ export interface SalesItemDetail {
   quantity: number;
   total_revenue: number;
 
-  name?: any;
+  name?: string;
   quantity_sold?: any;
 }
 

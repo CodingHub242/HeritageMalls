@@ -26,6 +26,8 @@ ion-list {
   --border-radius: 12px;
   background: transparent;
   padding: 0;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 ion-item {
