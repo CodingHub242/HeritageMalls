@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SalesReportsService } from '../services/sales-reports.service';
@@ -17,6 +17,9 @@ export class SalesReportsPage implements OnInit {
   monthlySales: MonthlySales[] = [];
   yearlySales: YearlySales[] = [];
   itemBreakdown: ItemBreakdown[] = [];
+
+  @ViewChild('dailyScroll', { static: false }) dailyScrollContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('itemsScroll', { static: false }) itemsScrollContainer!: ElementRef<HTMLDivElement>;
 
   // Chart properties
   public dailyChartData: ChartData<'line'> = {
@@ -229,5 +232,16 @@ export class SalesReportsPage implements OnInit {
 
   goToItemDetail(itemId: string) {
     this.router.navigate(['/item-details', itemId]);
+  }
+
+  scrollHorizontal(containerRef: 'dailyScroll' | 'itemsScroll', direction: number) {
+    const container = containerRef === 'dailyScroll' ? this.dailyScrollContainer : this.itemsScrollContainer;
+    if (container && container.nativeElement) {
+      const scrollAmount = 300; // pixels to scroll
+      container.nativeElement.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+    }
   }
 }

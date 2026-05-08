@@ -682,3 +682,94 @@ ion-card:nth-child(3) {
 ion-card:nth-child(4) {
   animation-delay: 0.3s;
 }
+
+/* Horizontal scroll container for sliders */
+.horizontal-scroll-wrapper {
+  position: relative;
+  margin: 0 -8px;
+}
+
+.horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 8px 40px 8px 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  /* Hide scrollbar for cleaner look but still scrollable */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
+
+.sales-card-clickable {
+  flex: 0 0 260px;
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  ion-card-content {
+    padding: 16px;
+
+    h3 {
+      margin: 0 0 12px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2c3e50;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    p {
+      margin: 6px 0;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      ion-icon {
+        font-size: 1rem;
+        min-width: 16px;
+      }
+    }
+  }
+}
+
+/* Navigation arrows */
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  --background: rgba(255, 255, 255, 0.9);
+  --color: #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.left {
+    left: 4px;
+  }
+
+  &.right {
+    right: 4px;
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+}

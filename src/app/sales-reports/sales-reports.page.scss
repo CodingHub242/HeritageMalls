@@ -7,11 +7,16 @@
 }
 
 /* Horizontal scroll container for sliders */
+.horizontal-scroll-wrapper {
+  position: relative;
+  margin: 0 -8px;
+}
+
 .horizontal-scroll {
   display: flex;
   overflow-x: auto;
   gap: 16px;
-  padding: 8px 0;
+  padding: 8px 40px 8px 8px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   
@@ -60,6 +65,35 @@
         min-width: 16px;
       }
     }
+  }
+}
+
+/* Navigation arrows */
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  --background: rgba(255, 255, 255, 0.9);
+  --color: #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.left {
+    left: 4px;
+  }
+  
+  &.right {
+    right: 4px;
+  }
+  
+  ion-icon {
+    font-size: 20px;
   }
 }
 

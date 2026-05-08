@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AlertController, IonicModule, LoadingController } from '@ionic/angular';
 import { AuthService, User } from '../services/auth.service';
 import { ActivityService, BackendActivity } from '../services/activity.service';
@@ -22,6 +22,10 @@ export class AdminPage implements OnInit {
   monthlySales: MonthlySales[] = [];
   yearlySales: YearlySales[] = [];
   itemBreakdown: ItemBreakdown[] = [];
+
+  @ViewChild('dailyScroll', { static: false }) dailyScrollContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('itemsScroll', { static: false }) itemsScrollContainer!: ElementRef<HTMLDivElement>;
+
   // User data
   currentUser: User | null = null;
   isAdmin = false;
@@ -515,5 +519,32 @@ goBack() {
 
 goToAddToSales() {
     this.router.navigate(['/admin/add-to-sales']);
+  }
+
+  goToDailyDetail(date: string) {
+    this.router.navigate(['/sales-detail/daily', date]);
+  }
+
+  goToMonthlyDetail(month: string) {
+    this.router.navigate(['/sales-detail/monthly', month]);
+  }
+
+  goToYearlyDetail(year: string) {
+    this.router.navigate(['/sales-detail/yearly', year]);
+  }
+
+  goToItemDetail(itemId: string) {
+    this.router.navigate(['/item-details', itemId]);
+  }
+
+  scrollHorizontal(containerRef: 'dailyScroll' | 'itemsScroll', direction: number) {
+    const container = containerRef === 'dailyScroll' ? this.dailyScrollContainer : this.itemsScrollContainer;
+    if (container && container.nativeElement) {
+      const scrollAmount = 300;
+      container.nativeElement.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+    }
   }
 }

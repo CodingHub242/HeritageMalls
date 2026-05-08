@@ -34,17 +34,25 @@
                    [type]="dailyChartType">
                  </canvas>
                </div>
-               <!-- Horizontal Slider for Daily Sales -->
-               <div class="horizontal-scroll">
-                 <ion-card *ngFor="let sale of dailySales" (click)="goToDailyDetail(sale.date)" class="sales-card-clickable">
-                   <ion-card-content>
-                     <h3>{{ sale.date }}</h3>
-                     <p><ion-icon name="cash-outline"></ion-icon> GHS{{ sale.total_sales | number:'1.2-2' }}</p>
-                     <p><ion-icon name="cube-outline"></ion-icon> {{ sale.total_items_sold }} items</p>
-                     <p><ion-icon name="receipt-outline"></ion-icon> {{ sale.transactions }} transactions</p>
-                   </ion-card-content>
-                 </ion-card>
-               </div>
+                <!-- Horizontal Slider for Daily Sales -->
+                <div class="horizontal-scroll-wrapper">
+                  <ion-button fill="clear" class="scroll-arrow left" (click)="scrollHorizontal('dailyScroll', -1)">
+                    <ion-icon name="chevron-back"></ion-icon>
+                  </ion-button>
+                  <div class="horizontal-scroll" #dailyScroll>
+                    <ion-card *ngFor="let sale of dailySales" (click)="goToDailyDetail(sale.date)" class="sales-card-clickable">
+                      <ion-card-content>
+                        <h3>{{ sale.date }}</h3>
+                        <p><ion-icon name="cash-outline"></ion-icon> GHS{{ sale.total_sales | number:'1.2-2' }}</p>
+                        <p><ion-icon name="cube-outline"></ion-icon> {{ sale.total_items_sold }} items</p>
+                        <p><ion-icon name="receipt-outline"></ion-icon> {{ sale.transactions }} transactions</p>
+                      </ion-card-content>
+                    </ion-card>
+                  </div>
+                  <ion-button fill="clear" class="scroll-arrow right" (click)="scrollHorizontal('dailyScroll', 1)">
+                    <ion-icon name="chevron-forward"></ion-icon>
+                  </ion-button>
+                </div>
              </ion-card-content>
            </ion-card>
        </ion-col>
@@ -132,14 +140,22 @@
                </canvas>
              </div>
              <!-- Horizontal Slider for Top Items -->
-             <div class="horizontal-scroll">
-               <ion-card *ngFor="let item of itemBreakdown | slice:0:5" (click)="goToItemDetail(item.itemId)" class="sales-card-clickable">
-                 <ion-card-content>
-                   <h3>{{ item.itemName }}</h3>
-                   <p><ion-icon name="cube-outline"></ion-icon> Sold: <strong>{{ item.totalSold }}</strong></p>
-                   <p><ion-icon name="cash-outline"></ion-icon> Revenue: <strong>GHS{{ item.totalRevenue | number:'1.2-2' }}</strong></p>
-                 </ion-card-content>
-               </ion-card>
+             <div class="horizontal-scroll-wrapper">
+               <ion-button fill="clear" class="scroll-arrow left" (click)="scrollHorizontal('itemsScroll', -1)">
+                 <ion-icon name="chevron-back"></ion-icon>
+               </ion-button>
+               <div class="horizontal-scroll" #itemsScroll>
+                 <ion-card *ngFor="let item of itemBreakdown | slice:0:5" (click)="goToItemDetail(item.itemId)" class="sales-card-clickable">
+                   <ion-card-content>
+                     <h3>{{ item.itemName }}</h3>
+                     <p><ion-icon name="cube-outline"></ion-icon> Sold: <strong>{{ item.totalSold }}</strong></p>
+                     <p><ion-icon name="cash-outline"></ion-icon> Revenue: <strong>GHS{{ item.totalRevenue | number:'1.2-2' }}</strong></p>
+                   </ion-card-content>
+                 </ion-card>
+               </div>
+               <ion-button fill="clear" class="scroll-arrow right" (click)="scrollHorizontal('itemsScroll', 1)">
+                 <ion-icon name="chevron-forward"></ion-icon>
+               </ion-button>
              </div>
            </ion-card-content>
          </ion-card>

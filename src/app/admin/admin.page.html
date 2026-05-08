@@ -198,25 +198,34 @@
                     <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ dailySales.length }} days</ion-badge>
                   </ion-card-title>
                 </ion-card-header>
-                <ion-card-content>
-                  <div class="chart-container">
-                    <canvas baseChart 
-                      [data]="dailyChartData"
-                      [options]="dailyChartOptions"
-                      [type]="dailyChartType">
-                    </canvas>
-                  </div>
-                  <ion-list>
-                    <ion-item *ngFor="let sale of dailySales">
-                      <ion-label>
-                        <h2>{{ sale.date }}</h2>
-                        <p><ion-icon name="cash-outline"></ion-icon> Total Sales: <strong>GHS{{ sale.total_sales | number:'1.2-2' }}</strong></p>
-                        <p><ion-icon name="bag-handle-outline"></ion-icon> Items Sold: <strong>{{ sale.total_items_sold }}</strong></p>
-                        <p><ion-icon name="receipt-outline"></ion-icon> Transactions: <strong>{{ sale.transactions }}</strong></p>
-                      </ion-label>
-                    </ion-item>
-                  </ion-list>
-                </ion-card-content>
+                 <ion-card-content>
+                   <div class="chart-container">
+                     <canvas baseChart 
+                       [data]="dailyChartData"
+                       [options]="dailyChartOptions"
+                       [type]="dailyChartType">
+                     </canvas>
+                   </div>
+                   <!-- Horizontal Slider for Daily Sales -->
+                   <div class="horizontal-scroll-wrapper">
+                     <ion-button fill="clear" class="scroll-arrow left" (click)="scrollHorizontal('dailyScroll', -1)">
+                       <ion-icon name="chevron-back"></ion-icon>
+                     </ion-button>
+                     <div class="horizontal-scroll" #dailyScroll>
+                       <ion-card *ngFor="let sale of dailySales" (click)="goToDailyDetail(sale.date)" class="sales-card-clickable">
+                         <ion-card-content>
+                           <h3>{{ sale.date }}</h3>
+                           <p><ion-icon name="cash-outline"></ion-icon> GHS{{ sale.total_sales | number:'1.2-2' }}</p>
+                           <p><ion-icon name="cube-outline"></ion-icon> {{ sale.total_items_sold }} items</p>
+                           <p><ion-icon name="receipt-outline"></ion-icon> {{ sale.transactions }} transactions</p>
+                         </ion-card-content>
+                       </ion-card>
+                     </div>
+                     <ion-button fill="clear" class="scroll-arrow right" (click)="scrollHorizontal('dailyScroll', 1)">
+                       <ion-icon name="chevron-forward"></ion-icon>
+                     </ion-button>
+                   </div>
+                 </ion-card-content>
               </ion-card>
           </ion-col>
 
@@ -230,25 +239,25 @@
                   <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ monthlySales.length }} months</ion-badge>
                 </ion-card-title>
               </ion-card-header>
-              <ion-card-content>
-                <div class="chart-container">
-                  <canvas baseChart 
-                    [data]="monthlyChartData"
-                    [options]="monthlyChartOptions"
-                    [type]="monthlyChartType">
-                  </canvas>
-                </div>
-                <ion-list>
-                  <ion-item *ngFor="let sale of monthlySales">
-                    <ion-label>
-                      <h2>{{ sale.month }}</h2>
-                      <p><ion-icon name="cash-outline"></ion-icon> Total Sales: <strong>GHS{{ sale.total_sales | number:'1.2-2' }}</strong></p>
-                      <p><ion-icon name="bag-handle-outline"></ion-icon> Items Sold: <strong>{{ sale.total_items_sold }}</strong></p>
-                      <p><ion-icon name="receipt-outline"></ion-icon> Transactions: <strong>{{ sale.transactions }}</strong></p>
-                    </ion-label>
-                  </ion-item>
-                </ion-list>
-              </ion-card-content>
+               <ion-card-content>
+                 <div class="chart-container">
+                   <canvas baseChart 
+                     [data]="monthlyChartData"
+                     [options]="monthlyChartOptions"
+                     [type]="monthlyChartType">
+                   </canvas>
+                 </div>
+                 <ion-list>
+                   <ion-item *ngFor="let sale of monthlySales" (click)="goToMonthlyDetail(sale.month)" button>
+                     <ion-label>
+                       <h2>{{ sale.month }}</h2>
+                       <p><ion-icon name="cash-outline"></ion-icon> GHS{{ sale.total_sales | number:'1.2-2' }}</p>
+                       <p><ion-icon name="cube-outline"></ion-icon> {{ sale.total_items_sold }} items</p>
+                       <p><ion-icon name="receipt-outline"></ion-icon> {{ sale.transactions }} transactions</p>
+                     </ion-label>
+                   </ion-item>
+                 </ion-list>
+               </ion-card-content>
             </ion-card>
           </ion-col>
 
@@ -262,25 +271,25 @@
                   <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ yearlySales.length }} years</ion-badge>
                 </ion-card-title>
               </ion-card-header>
-              <ion-card-content>
-                <div class="chart-container">
-                  <canvas baseChart 
-                    [data]="yearlyChartData"
-                    [options]="yearlyChartOptions"
-                    [type]="yearlyChartType">
-                  </canvas>
-                </div>
-                <ion-list>
-                  <ion-item *ngFor="let sale of yearlySales">
-                    <ion-label>
-                      <h2>{{ sale.year }}</h2>
-                      <p><ion-icon name="cash-outline"></ion-icon> Total Sales: <strong>GHS{{ sale.total_sales | number:'1.2-2' }}</strong></p>
-                      <p><ion-icon name="bag-handle-outline"></ion-icon> Items Sold: <strong>{{ sale.total_items_sold }}</strong></p>
-                      <p><ion-icon name="receipt-outline"></ion-icon> Transactions: <strong>{{ sale.transactions }}</strong></p>
-                    </ion-label>
-                  </ion-item>
-                </ion-list>
-              </ion-card-content>
+               <ion-card-content>
+                 <div class="chart-container">
+                   <canvas baseChart 
+                     [data]="yearlyChartData"
+                     [options]="yearlyChartOptions"
+                     [type]="yearlyChartType">
+                   </canvas>
+                 </div>
+                 <ion-list>
+                   <ion-item *ngFor="let sale of yearlySales" (click)="goToYearlyDetail(sale.year)" button>
+                     <ion-label>
+                       <h2>{{ sale.year }}</h2>
+                       <p><ion-icon name="cash-outline"></ion-icon> GHS{{ sale.total_sales | number:'1.2-2' }}</p>
+                       <p><ion-icon name="cube-outline"></ion-icon> {{ sale.total_items_sold }} items</p>
+                       <p><ion-icon name="receipt-outline"></ion-icon> {{ sale.transactions }} transactions</p>
+                     </ion-label>
+                   </ion-item>
+                 </ion-list>
+               </ion-card-content>
             </ion-card>
           </ion-col>
 
@@ -294,24 +303,33 @@
                   <ion-badge slot="end" style="background: rgba(255,255,255,0.2);">{{ itemBreakdown.length }} items</ion-badge>
                 </ion-card-title>
               </ion-card-header>
-              <ion-card-content>
-                <div class="chart-container">
-                  <canvas baseChart 
-                    [data]="itemChartData"
-                    [options]="itemChartOptions"
-                    [type]="itemChartType">
-                  </canvas>
-                </div>
-                <ion-list>
-                  <ion-item *ngFor="let item of itemBreakdown">
-                    <ion-label>
-                      <h2>{{ item.itemName }}</h2>
-                      <p><ion-icon name="bag-handle-outline"></ion-icon> Total Sold: <strong>{{ item.totalSold }}</strong></p>
-                      <p><ion-icon name="cash-outline"></ion-icon> Total Revenue: <strong>GHS{{ item.totalRevenue | number:'1.2-2' }}</strong></p>
-                    </ion-label>
-                  </ion-item>
-                </ion-list>
-              </ion-card-content>
+               <ion-card-content>
+                 <div class="chart-container">
+                   <canvas baseChart 
+                     [data]="itemChartData"
+                     [options]="itemChartOptions"
+                     [type]="itemChartType">
+                   </canvas>
+                 </div>
+                 <!-- Horizontal Slider for Top Items -->
+                 <div class="horizontal-scroll-wrapper">
+                   <ion-button fill="clear" class="scroll-arrow left" (click)="scrollHorizontal('itemsScroll', -1)">
+                     <ion-icon name="chevron-back"></ion-icon>
+                   </ion-button>
+                   <div class="horizontal-scroll" #itemsScroll>
+                     <ion-card *ngFor="let item of itemBreakdown | slice:0:5" (click)="goToItemDetail(item.itemId)" class="sales-card-clickable">
+                       <ion-card-content>
+                         <h3>{{ item.itemName }}</h3>
+                         <p><ion-icon name="cube-outline"></ion-icon> Sold: <strong>{{ item.totalSold }}</strong></p>
+                         <p><ion-icon name="cash-outline"></ion-icon> Revenue: <strong>GHS{{ item.totalRevenue | number:'1.2-2' }}</strong></p>
+                       </ion-card-content>
+                     </ion-card>
+                   </div>
+                   <ion-button fill="clear" class="scroll-arrow right" (click)="scrollHorizontal('itemsScroll', 1)">
+                     <ion-icon name="chevron-forward"></ion-icon>
+                   </ion-button>
+                 </div>
+               </ion-card-content>
             </ion-card>
           </ion-col>
         </ion-row>
