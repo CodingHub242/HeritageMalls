@@ -46,6 +46,9 @@ export interface SalesItemDetail {
   barcode: string;
   quantity: number;
   total_revenue: number;
+
+  name?: any;
+  quantity_sold?: any;
 }
 
 @Injectable({
