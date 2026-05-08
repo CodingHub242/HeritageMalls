@@ -23,8 +23,8 @@ interface SelectedItem {
   selector: 'app-add-to-sales',
   templateUrl: './add-to-sales.page.html',
   styleUrls: ['./add-to-sales.page.scss'],
-  standalone: false,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  //standalone: false,
+ // schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     FormsModule,IonicModule
