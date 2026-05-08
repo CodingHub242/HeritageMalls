@@ -99,90 +99,58 @@ class SalesReportsController extends Controller
         return response()->json($itemBreakdown);
     }
 
-    /**
+/**
      * Get detailed items sold for a specific date
      */
     public function dailyItems($date, Request $request)
     {
         $userId = Auth::id();
-        $detailed = $request->query('detailed', false);
         
-        if ($detailed) {
-            // Return individual sale items for management
-            $items = DB::table('sale_items')
-                ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-                ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->select('sale_items.id as saleItemId')
-                ->select('sales.id as saleId')
-                ->select('items.id as itemId')
-                ->select('items.name as itemName')
-                ->select('items.barcode')
-                ->select('sale_items.quantity')
-                ->selectRaw('sale_items.quantity * sale_items.unit_price as total_revenue')
-                ->where('sales.user_id', $userId)
-                ->whereDate('sales.created_at', $date)
-                ->orderBy('sales.created_at', 'DESC')
-                ->get();
-        } else {
-            // Return aggregated data for display
-            $items = DB::table('sale_items')
-                ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-                ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->select('items.id as itemId')
-                ->select('items.name as itemName')
-                ->select('items.barcode')
-                ->selectRaw('SUM(sale_items.quantity) as quantity')
-                ->selectRaw('SUM(sale_items.quantity * sale_items.unit_price) as total_revenue')
-                ->where('sales.user_id', $userId)
-                ->whereDate('sales.created_at', $date)
-                ->groupBy('items.id', 'items.name', 'items.barcode')
-                ->orderBy('total_revenue', 'DESC')
-                ->get();
-        }
+        // Use raw SQL to get individual sale items with itemId and saleId
+        $items = DB::select("
+            SELECT 
+                sale_items.id as saleItemId,
+                sales.id as saleId,
+                items.id as itemId,
+                items.name as itemName,
+                items.barcode,
+                sale_items.quantity,
+                (sale_items.quantity * sale_items.unit_price) as total_revenue
+            FROM sale_items
+            INNER JOIN sales ON sale_items.sale_id = sales.id
+            INNER JOIN items ON sale_items.item_id = items.id
+            WHERE sales.user_id = ?
+            AND DATE(sales.created_at) = ?
+            ORDER BY sales.created_at DESC
+        ", [$userId, $date]);
         
         return response()->json($items);
     }
 
-    /**
+/**
      * Get detailed items sold for a specific month (YYYY-MM)
      */
     public function monthlyItems($month, Request $request)
     {
         $userId = Auth::id();
-        $detailed = $request->query('detailed', false);
         
-        if ($detailed) {
-            // Return individual sale items for management
-            $items = DB::table('sale_items')
-                ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-                ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->select('sale_items.id as saleItemId')
-                ->select('sales.id as saleId')
-                ->select('items.id as itemId')
-                ->select('items.name as itemName')
-                ->select('items.barcode')
-                ->select('sale_items.quantity')
-                ->selectRaw('sale_items.quantity * sale_items.unit_price as total_revenue')
-                ->where('sales.user_id', $userId)
-                ->where(DB::raw('DATE_FORMAT(sales.created_at, "%Y-%m")'), $month)
-                ->orderBy('sales.created_at', 'DESC')
-                ->get();
-        } else {
-            // Return aggregated data for display
-            $items = DB::table('sale_items')
-                ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-                ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->select('items.id as itemId')
-                ->select('items.name as itemName')
-                ->select('items.barcode')
-                ->selectRaw('SUM(sale_items.quantity) as quantity')
-                ->selectRaw('SUM(sale_items.quantity * sale_items.unit_price) as total_revenue')
-                ->where('sales.user_id', $userId)
-                ->where(DB::raw('DATE_FORMAT(sales.created_at, "%Y-%m")'), $month)
-                ->groupBy('items.id', 'items.name', 'items.barcode')
-                ->orderBy('total_revenue', 'DESC')
-                ->get();
-        }
+        // Use raw SQL to get individual sale items with itemId and saleId
+        $items = DB::select("
+            SELECT 
+                sale_items.id as saleItemId,
+                sales.id as saleId,
+                items.id as itemId,
+                items.name as itemName,
+                items.barcode,
+                sale_items.quantity,
+                (sale_items.quantity * sale_items.unit_price) as total_revenue
+            FROM sale_items
+            INNER JOIN sales ON sale_items.sale_id = sales.id
+            INNER JOIN items ON sale_items.item_id = items.id
+            WHERE sales.user_id = ?
+            AND DATE_FORMAT(sales.created_at, '%Y-%m') = ?
+            ORDER BY sales.created_at DESC
+        ", [$userId, $month]);
         
         return response()->json($items);
     }
@@ -193,40 +161,24 @@ class SalesReportsController extends Controller
     public function yearlyItems($year, Request $request)
     {
         $userId = Auth::id();
-        $detailed = $request->query('detailed', false);
         
-        if ($detailed) {
-            // Return individual sale items for management
-            $items = DB::table('sale_items')
-                ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-                ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->select('sale_items.id as saleItemId')
-                ->select('sales.id as saleId')
-                ->select('items.id as itemId')
-                ->select('items.name as itemName')
-                ->select('items.barcode')
-                ->select('sale_items.quantity')
-                ->selectRaw('sale_items.quantity * sale_items.unit_price as total_revenue')
-                ->where('sales.user_id', $userId)
-                ->whereYear('sales.created_at', $year)
-                ->orderBy('sales.created_at', 'DESC')
-                ->get();
-        } else {
-            // Return aggregated data for display
-            $items = DB::table('sale_items')
-                ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-                ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->select('items.id as itemId')
-                ->select('items.name as itemName')
-                ->select('items.barcode')
-                ->selectRaw('SUM(sale_items.quantity) as quantity')
-                ->selectRaw('SUM(sale_items.quantity * sale_items.unit_price) as total_revenue')
-                ->where('sales.user_id', $userId)
-                ->whereYear('sales.created_at', $year)
-                ->groupBy('items.id', 'items.name', 'items.barcode')
-                ->orderBy('total_revenue', 'DESC')
-                ->get();
-        }
+        // Use raw SQL to get individual sale items with itemId and saleId
+        $items = DB::select("
+            SELECT 
+                sale_items.id as saleItemId,
+                sales.id as saleId,
+                items.id as itemId,
+                items.name as itemName,
+                items.barcode,
+                sale_items.quantity,
+                (sale_items.quantity * sale_items.unit_price) as total_revenue
+            FROM sale_items
+            INNER JOIN sales ON sale_items.sale_id = sales.id
+            INNER JOIN items ON sale_items.item_id = items.id
+            WHERE sales.user_id = ?
+            AND YEAR(sales.created_at) = ?
+            ORDER BY sales.created_at DESC
+        ", [$userId, $year]);
         
         return response()->json($items);
     }
@@ -382,18 +334,22 @@ class SalesReportsController extends Controller
                 
             DB::commit();
             
-            // Return updated sale item
-            $updatedItem = DB::table('sale_items')
-                ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->where('sale_items.id', $saleItem->id)
-                ->select('items.id as itemId')
-                ->select('items.name as itemName')
-                ->select('items.barcode')
-                ->select('sale_items.quantity')
-                ->selectRaw('sale_items.quantity * sale_items.unit_price as total_revenue')
-                ->first();
-                
-            return response()->json($updatedItem);
+// Return updated sale item with itemId and saleId
+            $updatedItem = DB::select("
+                SELECT 
+                    sales.id as saleId,
+                    items.id as itemId,
+                    items.name as itemName,
+                    items.barcode,
+                    sale_items.quantity,
+                    (sale_items.quantity * sale_items.unit_price) as total_revenue
+                FROM sale_items
+                INNER JOIN sales ON sale_items.sale_id = sales.id
+                INNER JOIN items ON sale_items.item_id = items.id
+                WHERE sale_items.id = ?
+            ", [$saleItem->id]);
+            
+            return response()->json(count($updatedItem) > 0 ? $updatedItem[0] : null);
             
         } catch (\Exception $e) {
             DB::rollBack();
