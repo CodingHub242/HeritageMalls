@@ -20,7 +20,7 @@
 
 .action-button {
   padding: 16px;
-  position: fixed;
+  //position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -55,6 +55,7 @@ ion-item {
  overflow: hidden;
  border: 1px solid #ccc;
  background-color: #f1f1f1;
+ margin-top: 20px;
 
  button {
   background-color: inherit;
