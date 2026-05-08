@@ -19,8 +19,8 @@ export class ItemFormModalComponent implements OnInit {
   categories: Category[] | undefined = [];
   imagePreviews: string[] = [];
   imageFiles: File[] = [];
-  isEdit = false;
-  item: Item | null = null;
+  @Input() isEdit = false;
+  @Input() item: Item | null = null;
   maxImages = 5; // Maximum number of images allowed
   
   @Input() initialBarcode: string | null = null;
@@ -104,6 +104,7 @@ export class ItemFormModalComponent implements OnInit {
   }
 
   async onSubmit() {
+    console.log('Form submitted. Valid:', this.itemForm.valid, 'Value:', this.itemForm.value);
     if (this.itemForm.valid) {
       const loading = await this.loadingCtrl.create({
         message: this.isEdit ? 'Updating item...' : 'Creating item...'
@@ -113,7 +114,9 @@ export class ItemFormModalComponent implements OnInit {
       try {
         const formData = new FormData();
         const itemData = this.itemForm.value;
-        
+
+        console.log('Item data to send:', itemData);
+
         // Append all form fields to FormData
         Object.keys(itemData).forEach(key => {
           if (itemData[key] !== null && itemData[key] !== undefined) {

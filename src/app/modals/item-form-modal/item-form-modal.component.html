@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="itemForm">
     <div class="image-upload-section">
       <div class="image-previews">
         <div class="image-preview" *ngFor="let preview of imagePreviews; let i = index">
@@ -91,7 +91,7 @@
 
     <div class="form-buttons">
       <ion-button type="button" fill="outline" (click)="dismiss()" style="color:white;--color:white;">Cancel</ion-button>
-      <ion-button type="submit" [disabled]="!itemForm.valid">
+      <ion-button type="button" (click)="onSubmit()" [disabled]="!itemForm.valid">
         {{ isEdit ? 'Update' : 'Add' }} Item
       </ion-button>
     </div>

@@ -7,7 +7,7 @@
      <div class="action-button" *ngIf="selectedItems.length > 0" slot="end">
         <ion-button expand="block" size="large" (click)="createSale()" [disabled]="loading">
           <ion-spinner *ngIf="loading"></ion-spinner>
-          <span *ngIf="!loading">Create Sale</span>
+          <span *ngIf="!loading">Complete Sale</span>
         </ion-button>
       </div>
     <ion-title>Add to Sales</ion-title>

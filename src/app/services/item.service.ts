@@ -173,8 +173,10 @@ searchByBarcode(barcode: string): Observable<Item> {
     if (userId) {
       formData.append('user_id', userId.toString());
     }
+    // Laravel doesn't parse multipart/form-data for PUT requests.
+    // Use method spoofing: send as POST with _method=PUT
+    formData.append('_method', 'PUT');
     const headers = this.getAuthHeaders();
-    // Using PUT for full updates with FormData
-    return this.http.put<Item>(`${this.apiUrl}/${id}`, formData, { headers });
+    return this.http.post<Item>(`${this.apiUrl}/${id}`, formData, { headers });
   }
 }
