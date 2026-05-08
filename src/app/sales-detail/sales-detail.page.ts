@@ -72,10 +72,10 @@ export class SalesDetailPage implements OnInit {
 
     const headers = ['Item Name', 'Barcode', 'Quantity', 'Total Revenue (GHS)'];
     const rows = this.items.map(item => [
-      item.itemName,
+      item.name || item.itemName || 'N/A',
       item.barcode || '',
       item.quantity.toString(),
-      item.total_revenue.toFixed(2)
+      Number(item.total_revenue).toFixed(2)
     ]);
 
     const csvContent = [
