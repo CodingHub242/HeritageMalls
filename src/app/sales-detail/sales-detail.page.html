@@ -32,25 +32,23 @@
       </ion-card-content>
     </ion-card>
 
-       <ion-list *ngIf="!loading && items.length > 0">
-         <ion-item *ngFor="let item of items" lines="full">
-           <ion-label>
-             <h2>{{ item.itemName || item.name || 'Unknown Item' }}</h2>
-             <!-- <p><ion-icon name="barcode-outline"></ion-icon> Barcode: <strong>{{ item.barcode || 'N/A' }}</strong></p> -->
-             <p><ion-icon name="cube-outline"></ion-icon> Quantity Sold: <strong>{{ item.quantity }}</strong></p>
-             <p><ion-icon name="cash-outline"></ion-icon> Total Revenue: <strong>GHS{{ item.total_revenue | number:'1.2-2' }}</strong></p>
-           </ion-label>
-           <ion-item-options side="end">
-             <ion-item-option color="danger" (click)="deleteItem(item.itemId, item.saleId)">
-               <ion-icon name="trash-outline"></ion-icon>
-               Delete
-             </ion-item-option>
-             <ion-item-option color="primary" (click)="editItem(item.itemId, item.saleId, item.quantity)">
-               <ion-icon name="create-outline"></ion-icon>
-               Edit
-             </ion-item-option>
-           </ion-item-options>
-         </ion-item>
-       </ion-list>
+        <ion-list *ngIf="!loading && items.length > 0">
+          <ion-item *ngFor="let item of items" lines="full">
+            <ion-label>
+              <h2>{{ item.itemName || item.name || 'Unknown Item' }}</h2>
+              <!-- <p><ion-icon name="barcode-outline"></ion-icon> Barcode: <strong>{{ item.barcode || 'N/A' }}</strong></p> -->
+              <p><ion-icon name="cube-outline"></ion-icon> Quantity Sold: <strong>{{ item.quantity }}</strong></p>
+              <p><ion-icon name="cash-outline"></ion-icon> Total Revenue: <strong>GHS{{ item.total_revenue | number:'1.2-2' }}</strong></p>
+            </ion-label>
+            <ion-buttons slot="end">
+              <ion-button color="danger" size="small" (click)="deleteItem(item.itemId, item.saleId)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+              <ion-button color="primary" size="small" (click)="editItem(item.itemId, item.saleId, item.quantity)">
+                <ion-icon name="create-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-list>
   </div>
 </ion-content>
