@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { ItemService } from '../../services/item.service';
 import { ScannerService, ScanResult } from '../../services/scanner.service';
 import { SaleService } from '../../services/sale.service';
 import { Item } from '../../models/item.model';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 interface SelectedItem {
   item: Item;
@@ -15,7 +16,9 @@ interface SelectedItem {
   selector: 'app-add-to-sales',
   templateUrl: './add-to-sales.page.html',
   styleUrls: ['./add-to-sales.page.scss'],
-  standalone: false
+  standalone: false,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class AddToSalesPage implements OnInit {
   // Search
