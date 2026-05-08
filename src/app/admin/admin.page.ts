@@ -8,6 +8,7 @@ import { DailySales, MonthlySales, YearlySales, ItemBreakdown } from '../service
 import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -178,13 +179,14 @@ export class AdminPage implements OnInit {
   };
   public itemChartType: ChartType = 'doughnut';
 
-  constructor(
+constructor(
     private authService: AuthService,
     private activityService: ActivityService,
     private userService: UserService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private salesReportsService: SalesReportsService
+    private salesReportsService: SalesReportsService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -508,7 +510,11 @@ toggleCreateUserForm() {
     );
   }
 
-  goBack() {
+goBack() {
     window.history.back();
+  }
+
+goToAddToSales() {
+    this.router.navigate(['/admin/add-to-sales']);
   }
 }

@@ -95,13 +95,25 @@ export class ItemService {
     );
   }
 
-  searchByBarcode(barcode: string): Observable<Item> {
+searchByBarcode(barcode: string): Observable<Item> {
     let params = new HttpParams();
     const userId = this.authService.getCurrentUserId();
     if (userId) {
       params = params.set('user_id', userId);
     }
     return this.http.get<Item>(`${this.apiUrl}/search/${barcode}`, { params, headers: this.getAuthHeaders() });
+  }
+
+  searchItems(query: string): Observable<Item[]> {
+    let params = new HttpParams();
+    if (query) {
+      params = params.set('q', query);
+    }
+    const userId = this.authService.getCurrentUserId();
+    if (userId) {
+      params = params.set('user_id', userId);
+    }
+    return this.http.get<Item[]>(`${this.apiUrl}/search`, { params, headers: this.getAuthHeaders() });
   }
 
   importFromExcel(formData: FormData): Observable<any> {

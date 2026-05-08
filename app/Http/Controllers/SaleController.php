@@ -70,9 +70,15 @@ class SaleController extends Controller
                 'status' => 'completed',
             ]);
 
+            // Get custom sale date if provided
+            $saleDate = $request->input('sale_date') ? $request->input('sale_date') : now();
+
             // Create sale items and update inventory
             foreach ($saleItems as $saleItemData) {
-                SaleItem::create(array_merge($saleItemData, ['sale_id' => $sale->id]));
+                $saleItem = SaleItem::create(array_merge($saleItemData, [
+                    'sale_id' => $sale->id,
+                    'created_at' => $saleDate
+                ]));
 
                 // Update item quantity
                 $item = Item::find($saleItemData['item_id']);

@@ -31,12 +31,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Dashboard routes
     Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
     
-    // Items routes
+// Items routes
     Route::get('/items', [ItemController::class, 'index']);
     Route::get('/items/{id}', [ItemController::class, 'show']);
     Route::post('/items', [ItemController::class, 'store']);
     Route::put('/items/{id}', [ItemController::class, 'update']);
     Route::get('/items/delete/{id}', [ItemController::class, 'destroy']);
+    Route::get('/items/search/{barcode}', [ItemController::class, 'search']);
+    Route::get('/items/search', [ItemController::class, 'search']);
     
     // Categories routes
     Route::get('/categories', [CategoryController::class, 'index']);

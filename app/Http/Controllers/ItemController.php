@@ -225,7 +225,7 @@ $item->save();
         return response()->json($items);
     }
 
-    /**
+/**
      * Display the specified item.
      *
      * @param  int  $id
@@ -235,6 +235,34 @@ $item->save();
     {
         $item = Item::with('category')->findOrFail($id);
         return response()->json($item);
+    }
+
+    /**
+     * Search for items by barcode or name.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $barcode = $request->route('barcode');
+        $query = $request->query('q');
+
+        $itemsQuery = Item::with('category');
+
+        if ($barcode) {
+            $itemsQuery->where('barcode', 'like', '%' . $barcode . '%');
+        }
+
+        if ($query) {
+            $itemsQuery->where(function($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%')
+                  ->orWhere('barcode', 'like', '%' . $query . '%');
+            });
+        }
+
+        $items = $itemsQuery->limit(20)->get();
+        return response()->json($items);
     }
 
     /**

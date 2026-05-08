@@ -7,6 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AdminPage } from './admin.page';
+import { AddToSalesPage } from './add-to-sales/add-to-sales.page';
 import { AdminRoutingModule } from './admin-routing.module';
 
 @NgModule({
@@ -16,7 +17,8 @@ import { AdminRoutingModule } from './admin-routing.module';
     IonicModule,
     AdminRoutingModule,
     HttpClientModule,
-    AdminPage
+    AdminPage,
+    AddToSalesPage
   ],
   //declarations: [AdminPage]
 })
