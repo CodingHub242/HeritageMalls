@@ -36,7 +36,7 @@
        <ion-item *ngFor="let item of items" lines="full">
          <ion-label>
            <h2>{{ item.itemName || item.name || 'Unknown Item' }}</h2>
-           <p><ion-icon name="barcode-outline"></ion-icon> Barcode: <strong>{{ item.barcode || 'N/A' }}</strong></p>
+           <!-- <p><ion-icon name="barcode-outline"></ion-icon> Barcode: <strong>{{ item.barcode || 'N/A' }}</strong></p> -->
            <p><ion-icon name="cube-outline"></ion-icon> Quantity Sold: <strong>{{ item.quantity }}</strong></p>
            <p><ion-icon name="cash-outline"></ion-icon> Total Revenue: <strong>GHS{{ item.total_revenue | number:'1.2-2' }}</strong></p>
          </ion-label>

@@ -104,7 +104,7 @@ class SalesReportsController extends Controller
     public function dailyItems($date)
     {
         $userId = Auth::id();
-        
+
         $items = DB::table('sale_items')
             ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
             ->join('items', 'sale_items.item_id', '=', 'items.id')

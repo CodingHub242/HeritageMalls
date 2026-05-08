@@ -54,6 +54,7 @@ export class SalesDetailPage implements OnInit {
     obs$.subscribe({
       next: (data:any) => {
         this.items = data;
+        console.log('Loaded items:', data);
         this.loading = false;
       },
       error: (err:any) => {
