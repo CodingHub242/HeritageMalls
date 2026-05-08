@@ -175,6 +175,6 @@ searchByBarcode(barcode: string): Observable<Item> {
     }
     const headers = this.getAuthHeaders();
     // Using PUT for full updates with FormData
-    return this.http.post<Item>(`${this.apiUrl}/${id}`, formData, { headers });
+    return this.http.put<Item>(`${this.apiUrl}/${id}`, formData, { headers });
   }
 }
