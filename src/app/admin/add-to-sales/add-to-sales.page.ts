@@ -66,6 +66,13 @@ export class AddToSalesPage implements OnInit {
     this.loadAllItems();
   }
 
+  ionViewWillEnter() {
+     //activate scanner tab by default
+    const defaultTab = document.querySelector('.tablinks') as HTMLElement;
+    //first tab in default is scanner, so we can just click it to activate
+    defaultTab.click();
+  }
+
 async loadAllItems() {
     this.isSearching = true;
     try {
@@ -260,5 +267,19 @@ async loadAllItems() {
     } else {
       this.addToSelection(item);
     }
+  }
+
+    openCity(evt:any, cityName:any) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent") as HTMLCollectionOf<HTMLElement>;
+      for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(cityName)!.style.display = "block";
+      evt.currentTarget.className += " active";
   }
 }

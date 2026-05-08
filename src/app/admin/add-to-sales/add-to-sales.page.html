@@ -3,6 +3,13 @@
     <ion-buttons slot="start" (click)="goBack()" style="background: #fff;padding: 8px;cursor: pointer;">
       <ion-icon style="color: black;" name="arrow-back"></ion-icon>
     </ion-buttons>
+
+     <div class="action-button" *ngIf="selectedItems.length > 0" slot="end">
+        <ion-button expand="block" size="large" (click)="createSale()" [disabled]="loading">
+          <ion-spinner *ngIf="loading"></ion-spinner>
+          <span *ngIf="!loading">Create Sale</span>
+        </ion-button>
+      </div>
     <ion-title>Add to Sales</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -79,78 +86,95 @@
     </ion-col>
 
     <ion-col size="4">
-      <!-- Selected Items Section -->
-      <ion-card *ngIf="selectedItems.length > 0">
-        <ion-card-header>
-          <ion-card-title>Selected Items ({{ selectedItems.length }})</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-list>
-            <ion-item *ngFor="let selectedItem of selectedItems; let i = index">
-              <ion-label>
-                <h2>{{ selectedItem.item.name }}</h2>
-                <p>{{ selectedItem.item.currency }}{{ selectedItem.item.price | number:'1.2-2' }} each</p>
-                <p>Line Total: {{ selectedItem.item.currency }}{{ (selectedItem.item.price * selectedItem.quantity) | number:'1.2-2' }}</p>
-              </ion-label>
-              <ion-row slot="end">
-                <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity - 1)">
-                  <ion-icon name="remove"></ion-icon>
-                </ion-button>
-                <ion-button size="small" fill="clear" disabled>
-                  {{ selectedItem.quantity }}
-                </ion-button>
-                <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity + 1)">
-                  <ion-icon name="add"></ion-icon>
-                </ion-button>
-                <ion-button size="small" color="danger" (click)="removeFromSelection(i)">
-                  <ion-icon name="trash"></ion-icon>
-                </ion-button>
-              </ion-row>
-            </ion-item>
-          </ion-list>
+      <!--Tabbed Section-->
+      <div class="tab">
+        <button class="tablinks" (click)="openCity($event, 'Cart')">Cart</button>
+        <button class="tablinks" (click)="openCity($event, 'Date')">Choose Date</button>
+      </div>
 
-          <!-- Total -->
-          <div class="total-section">
-            <h3>Total: GHS{{ getTotalAmount() | number:'1.2-2' }}</h3>
-          </div>
-        </ion-card-content>
-      </ion-card>
+      <div id="Cart" class="tabcontent">
+        <!-- Selected Items Section -->
+        <ion-card *ngIf="selectedItems.length > 0">
+          <ion-card-header>
+            <ion-card-title>Selected Items ({{ selectedItems.length }})</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let selectedItem of selectedItems; let i = index">
+                <ion-label>
+                  <h2>{{ selectedItem.item.name }}</h2>
+                  <p>{{ selectedItem.item.currency }}{{ selectedItem.item.price | number:'1.2-2' }} each</p>
+                  <p>Line Total: {{ selectedItem.item.currency }}{{ (selectedItem.item.price * selectedItem.quantity) | number:'1.2-2' }}</p>
+                </ion-label>
+                <ion-row slot="end">
+                  <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity - 1)">
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+                  <ion-button size="small" fill="clear" disabled>
+                    {{ selectedItem.quantity }}
+                  </ion-button>
+                  <ion-button size="small" (click)="updateQuantity(i, selectedItem.quantity + 1)">
+                    <ion-icon name="add"></ion-icon>
+                  </ion-button>
+                  <ion-button size="small" color="danger" (click)="removeFromSelection(i)">
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-button>
+                </ion-row>
+              </ion-item>
+            </ion-list>
 
-      <!-- Sale Details -->
-      <ion-card *ngIf="selectedItems.length > 0">
-        <ion-card-header>
-          <ion-card-title>Sale Details</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <!-- Custom Date -->
-          <ion-item>
-            <ion-label position="floating">Sale Date</ion-label>
-            <ion-datetime
-              [(ngModel)]="saleDate"
-              display-format="MMM DD, YYYY HH:mm"
-              picker-format="MMM DD, YYYY HH:mm">
-            </ion-datetime>
-          </ion-item>
+            <!-- Total -->
+            <div class="total-section">
+              <h3>Total: GHS{{ getTotalAmount() | number:'1.2-2' }}</h3>
+            </div>
+          </ion-card-content>
+        </ion-card>
 
-          <!-- Payment Method -->
-          <ion-item>
-            <ion-label>Payment Method</ion-label>
-            <ion-select [(ngModel)]="paymentMethod">
-              <ion-select-option value="cash">Cash</ion-select-option>
-              <ion-select-option value="card">Card</ion-select-option>
-              <ion-select-option value="mobile_money">Mobile Money</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
+        <ion-card *ngIf="selectedItems.length === 0" style="padding: 30px; background: #fff;">
+          <ion-card-header>
+            <ion-card-title>Selected Items</ion-card-title>
+          </ion-card-header>
+          <ion-card-content style="text-align: center; padding: 20px;">
+            <p>No items selected yet</p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <div id="Date" class="tabcontent">
+           <!-- Sale Details -->
+          <ion-card *ngIf="selectedItems.length > 0">
+            <ion-card-header>
+              <ion-card-title>Sale Details</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <!-- Custom Date -->
+              <ion-item>
+                <ion-label position="floating">Sale Date</ion-label>
+                <ion-datetime
+                  [(ngModel)]="saleDate"
+                  display-format="MMM DD, YYYY HH:mm"
+                  picker-format="MMM DD, YYYY HH:mm">
+                </ion-datetime>
+              </ion-item>
+
+              <!-- Payment Method -->
+              <ion-item>
+                <ion-label>Payment Method</ion-label>
+                <ion-select [(ngModel)]="paymentMethod">
+                  <ion-select-option value="cash">Cash</ion-select-option>
+                  <ion-select-option value="card">Card</ion-select-option>
+                  <ion-select-option value="mobile_money">Mobile Money</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+      </div>
+     
+
+     
 
       <!-- Create Sale Button -->
-      <div class="action-button" *ngIf="selectedItems.length > 0">
-        <ion-button expand="block" size="large" (click)="createSale()" [disabled]="loading">
-          <ion-spinner *ngIf="loading"></ion-spinner>
-          <span *ngIf="!loading">Create Sale</span>
-        </ion-button>
-      </div>
+     
     </ion-col>
   </ion-row>
   
