@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'tutorial',
+    redirectTo: 'landing',
     pathMatch: 'full'
   },
   {
