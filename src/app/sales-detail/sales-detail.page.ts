@@ -113,60 +113,60 @@ export class SalesDetailPage implements OnInit {
     });
   }
 
-  async editItem(itemId: string, saleId: string, currentQuantity: number) {
-    const alert = await this.alertController.create({
-      header: 'Edit Quantity',
-      inputs: [
-        {
-          name: 'quantity',
-          type: 'number',
-          label: 'Quantity',
-          value: currentQuantity,
-          min: '1'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Update',
-          handler: (data) => {
-            const quantity = parseInt(data.quantity);
-            if (!isNaN(quantity) && quantity >= 1) {
-              this.updateItemQuantity(itemId, saleId, quantity);
-            }
-          }
-        }
-      ]
-    });
+   async editItem(itemId: string, saleId: string, currentQuantity: number) {
+     const alert = await this.alertController.create({
+       header: 'Edit Quantity',
+       inputs: [
+         {
+           name: 'quantity',
+           type: 'number',
+           label: 'Quantity',
+           value: currentQuantity,
+           min: '1'
+         }
+       ],
+       buttons: [
+         {
+           text: 'Cancel',
+           role: 'cancel'
+         },
+         {
+           text: 'Update',
+           handler: (data) => {
+             const quantity = parseInt(data.quantity);
+             if (!isNaN(quantity) && quantity >= 1) {
+               this.updateItemQuantity(itemId, saleId, quantity);
+             }
+           }
+         }
+       ]
+     });
+ 
+     await alert.present();
+   }
 
-    await alert.present();
-  }
-
-  updateItemQuantity(itemId: string, saleId: string, quantity: number) {
-    this.loading = true;
-    this.salesReportsService.updateItemQuantity(saleId, itemId, quantity).subscribe({
-      next: (updatedItem:any) => {
-        // Update the item in the list
-        const index = this.items.findIndex(item => item.itemId === itemId);
-        if (index !== -1) {
-          this.items[index] = {
-            ...updatedItem,
-            saleId: saleId
-          };
-        }
-        this.loading = false;
-        this.showToast('Item updated successfully');
-      },
-      error: (err) => {
-        console.error('Error updating item:', err);
-        this.loading = false;
-        this.showToast('Failed to update item');
-      }
-    });
-  }
+   updateItemQuantity(itemId: string, saleId: string, quantity: number) {
+     this.loading = true;
+     this.salesReportsService.updateItemQuantity(saleId, itemId, quantity).subscribe({
+       next: (updatedItem:any) => {
+         // Update the item in the list
+         const index = this.items.findIndex(item => item.itemId === itemId);
+         if (index !== -1) {
+           this.items[index] = {
+             ...updatedItem,
+             saleId: saleId
+           };
+         }
+         this.loading = false;
+         this.showToast('Item updated successfully');
+       },
+       error: (err) => {
+         console.error('Error updating item:', err);
+         this.loading = false;
+         this.showToast('Failed to update item');
+       }
+     });
+   }
 
   exportToCsv() {
     if (this.items.length === 0) return;

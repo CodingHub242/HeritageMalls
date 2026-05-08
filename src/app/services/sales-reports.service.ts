@@ -104,6 +104,6 @@ export class SalesReportsService {
   }
 
   updateItemQuantity(saleId: string, itemId: string, quantity: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${saleId}/items/${itemId}`, { quantity }, { headers: this.getAuthHeaders() });
+    return this.http.put(`${this.apiUrl}/${saleId}/items/${itemId}`, { quantity: quantity }, { headers: this.getAuthHeaders() });
   }
 }
