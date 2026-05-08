@@ -24,6 +24,7 @@ export class AddToSalesPage implements OnInit {
   // Search
   searchQuery = '';
   searchResults: Item[] = [];
+  allItems: Item[] = [];
   isSearching = false;
 
   // Selected items for sale
@@ -60,11 +61,12 @@ export class AddToSalesPage implements OnInit {
     this.loadAllItems();
   }
 
-  async loadAllItems() {
+async loadAllItems() {
     this.isSearching = true;
     try {
       this.itemService.getItems().subscribe({
         next: (items) => {
+          this.allItems = items;
           this.searchResults = items;
           this.isSearching = false;
         },
@@ -80,21 +82,16 @@ export class AddToSalesPage implements OnInit {
 
   async searchItems() {
     if (!this.searchQuery || this.searchQuery.trim() === '') {
-      this.loadAllItems();
+      this.searchResults = this.allItems;
       return;
     }
 
-    this.isSearching = true;
-    this.itemService.searchItems(this.searchQuery.trim()).subscribe({
-      next: (items) => {
-        this.searchResults = items;
-        this.isSearching = false;
-      },
-      error: (err) => {
-        console.error('Search error:', err);
-        this.isSearching = false;
-      }
-    });
+    // Filter locally from already loaded items
+    const query = this.searchQuery.toLowerCase().trim();
+    this.searchResults = this.allItems.filter(item => 
+      item.name.toLowerCase().includes(query) || 
+      (item.barcode && item.barcode.toLowerCase().includes(query))
+    );
   }
 
   async startScan() {

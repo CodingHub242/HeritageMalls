@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, IonicModule, LoadingController } from '@ionic/angular';
 import { AuthService, User } from '../services/auth.service';
 import { ActivityService, BackendActivity } from '../services/activity.service';
 import { UserService, UserCount } from '../services/user.service';
@@ -15,8 +15,8 @@ import { Router } from '@angular/router';
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
  // standalone: false,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, BaseChartDirective]
+  //schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, BaseChartDirective,IonicModule]
 })
 export class AdminPage implements OnInit {
   dailySales: DailySales[] = [];
