@@ -4,7 +4,7 @@ import { SalesDetailPage } from './sales-detail.page';
 
 const routes: Routes = [
   {
-    path: ':period/:value',
+    path: '',
     component: SalesDetailPage
   }
 ];
