@@ -3,9 +3,15 @@ import { ItemService } from '../../services/item.service';
 import { ScannerService, ScanResult } from '../../services/scanner.service';
 import { SaleService } from '../../services/sale.service';
 import { Item } from '../../models/item.model';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { 
+  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, 
+  IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonGrid, IonRow, IonCol,
+  IonSearchbar, IonLabel, IonList, IonItem, IonBadge, IonSpinner, IonSelect, 
+  IonSelectOption, IonDatetime, AlertController, LoadingController
+} from '@ionic/angular';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface SelectedItem {
   item: Item;
@@ -17,8 +23,7 @@ interface SelectedItem {
   templateUrl: './add-to-sales.page.html',
   styleUrls: ['./add-to-sales.page.scss'],
   standalone: false,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AddToSalesPage implements OnInit {
   // Search
