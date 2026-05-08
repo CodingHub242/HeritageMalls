@@ -183,27 +183,39 @@ class SalesReportsController extends Controller
         return response()->json($items);
     }
 
-    /**
+/**
      * Delete a specific sale item
      */
     public function deleteItem($saleId, $itemId)
     {
         $userId = Auth::id();
         
+        // Ensure IDs are integers to prevent type mismatch issues
+        $saleId = intval($saleId);
+        $itemId = intval($itemId);
+        
+        // Validate required parameters
+        if ($saleId <= 0 || $itemId <= 0) {
+            return response()->json(['error' => 'Invalid sale ID or item ID'], 400);
+        }
+        
         DB::beginTransaction();
         
-        try {
-            // Find the sale item
+try {
+            // Find the sale item - use direct integer comparison with explicit CAST
             $saleItem = DB::table('sale_items')
                 ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-                ->where('sale_items.sale_id', $saleId)
-                ->where('sale_items.item_id', $itemId)
-                ->where('sales.user_id', $userId)
+                ->whereRaw('CAST(sale_items.sale_id AS UNSIGNED) = ?', [$saleId])
+                ->whereRaw('CAST(sale_items.item_id AS UNSIGNED) = ?', [$itemId])
+                ->where('sales.user_id', '=', $userId)
                 ->first();
             
             if (!$saleItem) {
+                error_log("Delete: Sale item not found for saleId: $saleId, itemId: $itemId");
                 return response()->json(['error' => 'Sale item not found'], 404);
             }
+            
+            error_log("Delete: Found sale_item.id: " . $saleItem->id . " with quantity: " . $saleItem->quantity);
             
             // Get the sale to update total amount
             $sale = DB::table('sales')
@@ -244,12 +256,21 @@ class SalesReportsController extends Controller
         }
     }
 
-    /**
+/**
      * Update quantity of a specific sale item
      */
     public function updateItemQuantity(Request $request, $saleId, $itemId)
     {
         $userId = Auth::id();
+        
+        // Ensure IDs are integers to prevent type mismatch issues
+        $saleId = intval($saleId);
+        $itemId = intval($itemId);
+        
+        // Debug: Log the incoming parameters
+        error_log("=== updateItemQuantity START ===");
+        error_log("saleId: " . $saleId . " (type: " . gettype($saleId) . ")");
+        error_log("itemId: " . $itemId . " (type: " . gettype($itemId) . ")");
         
         $validator = Validator::make($request->all(), [
             'quantity' => 'required|integer|min:1',
@@ -259,28 +280,38 @@ class SalesReportsController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         
-        $newQuantity = $request->input('quantity');
+        $newQuantity = intval($request->input('quantity'));
+        error_log("newQuantity: " . $newQuantity);
         
         DB::beginTransaction();
         
-        try {
-            // Find the sale item
+try {
+            // Find the sale item - use direct integer comparison with explicit CAST
             $saleItem = DB::table('sale_items')
                 ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
                 ->join('items', 'sale_items.item_id', '=', 'items.id')
-                ->where('sale_items.sale_id', $saleId)
-                ->where('sale_items.item_id', $itemId)
-                ->where('sales.user_id', $userId)
+                ->whereRaw('CAST(sale_items.sale_id AS UNSIGNED) = ?', [$saleId])
+                ->whereRaw('CAST(sale_items.item_id AS UNSIGNED) = ?', [$itemId])
+                ->where('sales.user_id', '=', $userId)
                 ->first();
             
+            error_log("Query result (saleItem): " . json_encode($saleItem));
+            
             if (!$saleItem) {
+                error_log("Sale item not found for saleId: $saleId, itemId: $itemId");
                 return response()->json(['error' => 'Sale item not found'], 404);
             }
+            
+            // Store the sale_item ID for update
+            $saleItemId = $saleItem->id;
+            error_log("Found sale_item.id: " . $saleItemId);
             
             // Get the item to check stock and get price
             $item = DB::table('items')
                 ->where('id', $itemId)
                 ->first();
+            
+            error_log("Item data: " . json_encode($item));
                 
             if (!$item) {
                 return response()->json(['error' => 'Item not found'], 404);
@@ -288,6 +319,9 @@ class SalesReportsController extends Controller
             
             // Check if sufficient stock is available for the increase
             $quantityChange = $newQuantity - $saleItem->quantity;
+            error_log("Current sale_item quantity: " . $saleItem->quantity);
+            error_log("Quantity change: " . $quantityChange);
+            
             if ($quantityChange > 0 && $item->quantity < $quantityChange) {
                 return response()->json(['error' => 'Insufficient stock available'], 400);
             }
@@ -302,39 +336,50 @@ class SalesReportsController extends Controller
                 return response()->json(['error' => 'Sale not found'], 404);
             }
             
+            error_log("Current sale total_amount: " . $sale->total_amount);
+            
             // Calculate the price difference
-            $priceDifference = ($newQuantity - $saleItem->quantity) * $saleItem->unit_price;
+            $unitPrice = $saleItem->unit_price;
+            $priceDifference = ($newQuantity - $saleItem->quantity) * $unitPrice;
+            error_log("Unit price: " . $unitPrice);
+            error_log("Price difference: " . $priceDifference);
             
             // Update the sale item quantity and total price
-            DB::table('sale_items')
+            $updateResult = DB::table('sale_items')
                 ->where('id', $saleItem->id)
                 ->update([
                     'quantity' => $newQuantity,
-                    'total_price' => $newQuantity * $saleItem->unit_price
+                    'total_price' => $newQuantity * $unitPrice
                 ]);
+            error_log("Sale items update result (rows affected): " . $updateResult);
                 
             // Update the sale total amount
             $newTotal = $sale->total_amount + $priceDifference;
-            DB::table('sales')
+            $saleUpdateResult = DB::table('sales')
                 ->where('id', $saleId)
                 ->update(['total_amount' => $newTotal]);
+            error_log("Sale update result (rows affected): " . $saleUpdateResult);
                 
             // Update item inventory
             if ($quantityChange > 0) {
                 // Decrease stock (selling more)
-                DB::table('items')
+                $itemDecreaseResult = DB::table('items')
                     ->where('id', $itemId)
                     ->decrement('quantity', $quantityChange);
+                error_log("Item decrement result: " . $itemDecreaseResult);
             } elseif ($quantityChange < 0) {
                 // Increase stock (selling less)
-                DB::table('items')
+                $itemIncreaseResult = DB::table('items')
                     ->where('id', $itemId)
                     ->increment('quantity', abs($quantityChange));
+                error_log("Item increment result: " . $itemIncreaseResult);
             }
-                
+            
             DB::commit();
             
-// Return updated sale item with itemId and saleId
+            error_log("=== updateItemQuantity END (SUCCESS) ===");
+            
+        // Return updated sale item with itemId and saleId
             $updatedItem = DB::select("
                 SELECT 
                     sales.id as saleId,
@@ -353,6 +398,7 @@ class SalesReportsController extends Controller
             
         } catch (\Exception $e) {
             DB::rollBack();
+            error_log("=== updateItemQuantity ERROR: " . $e->getMessage());
             return response()->json(['error' => 'Failed to update item: ' . $e->getMessage()], 500);
         }
     }

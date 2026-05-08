@@ -99,11 +99,32 @@ getDailyItems(date: string): Observable<SalesItemDetail[]> {
     return this.http.get<SalesItemDetail[]>(`${this.apiUrl}/yearly/${year}/items`, { headers: this.getAuthHeaders() });
   }
 
-  deleteItem(saleId: string, itemId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${saleId}/items/${itemId}`, { headers: this.getAuthHeaders() });
+deleteItem(saleId: string | number, itemId: string | number): Observable<any> {
+    // Ensure IDs are integers
+    const saleIdNum = Number(saleId);
+    const itemIdNum = Number(itemId);
+    
+    if (isNaN(saleIdNum) || isNaN(itemIdNum) || saleIdNum <= 0 || itemIdNum <= 0) {
+      throw new Error('Invalid sale ID or item ID');
+    }
+    
+    return this.http.delete(`${this.apiUrl}/${saleIdNum}/items/${itemIdNum}`, { headers: this.getAuthHeaders() });
   }
 
-  updateItemQuantity(saleId: string, itemId: string, quantity: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${saleId}/items/${itemId}`, { quantity: quantity }, { headers: this.getAuthHeaders() });
+  updateItemQuantity(saleId: string | number, itemId: string | number, quantity: number): Observable<any> {
+    // Ensure IDs are integers
+    const saleIdNum = Number(saleId);
+    const itemIdNum = Number(itemId);
+    const quantityNum = Math.floor(Number(quantity));
+    
+    if (isNaN(saleIdNum) || isNaN(itemIdNum) || saleIdNum <= 0 || itemIdNum <= 0) {
+      throw new Error('Invalid sale ID or item ID');
+    }
+    
+    if (isNaN(quantityNum) || quantityNum <= 0) {
+      throw new Error('Invalid quantity');
+    }
+    
+    return this.http.put(`${this.apiUrl}/${saleIdNum}/items/${itemIdNum}`, { quantity: quantityNum }, { headers: this.getAuthHeaders() });
   }
 }

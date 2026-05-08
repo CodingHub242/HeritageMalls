@@ -55,30 +55,30 @@ export class SalesDetailPage implements OnInit {
 
 obs$.subscribe({
       next: (data:any) => {
-        // DEBUG: Log raw API response to verify what's coming from the backend
-        console.log('=== DEBUG: Raw API Response ===');
-        console.log('API Response Data:', JSON.stringify(data, null, 2));
-        
-        // Check first item structure
-        if (data && data.length > 0) {
-          console.log('=== DEBUG: First Item Keys ===');
-          console.log('First Item Object:', data[0]);
-          console.log('First Item Keys:', Object.keys(data[0]));
+        // Ensure data is an array
+        if (!data || !Array.isArray(data)) {
+          console.error('Invalid API response:', data);
+          this.items = [];
+          this.loading = false;
+          return;
         }
         
-        // For detailed view, we already have saleId and itemId from the API
-        this.items = data.map((item: any) => ({
-          ...item,
-          // Ensure we have both IDs for delete/update operations
-          saleId: item.saleId, // Use API saleId directly
-          itemId: item.itemId // Use API itemId directly
-        }));
+        // Map items ensuring proper number conversion for IDs
+        this.items = data.map((item: any) => {
+          // Ensure saleId and itemId are properly converted to numbers
+          const saleId = item.saleId ? Number(item.saleId) : null;
+          const itemId = item.itemId ? Number(item.itemId) : null;
+          
+          return {
+            ...item,
+            saleId: saleId,
+            itemId: itemId,
+            // Ensure numeric fields are numbers
+            quantity: item.quantity ? Number(item.quantity) : 0,
+            total_revenue: item.total_revenue ? Number(item.total_revenue) : 0
+          };
+        });
         
-        // DEBUG: Log mapped items
-        console.log('=== DEBUG: Mapped Items ===');
-        console.log('First mapped item:', this.items[0]);
-        console.log('Has itemId?', !!this.items[0]?.itemId, 'itemId value:', this.items[0]?.itemId);
-        console.log('Has saleId?', !!this.items[0]?.saleId, 'saleId value:', this.items[0]?.saleId);
         console.log('Loaded items:', this.items);
         this.loading = false;
       },
@@ -115,19 +115,22 @@ obs$.subscribe({
     await alert.present();
   }
 
-async performDelete(itemId: string, saleId: string) {
-    // DEBUG: Log delete parameters
-    console.log('=== DEBUG: Delete Operation ===');
-    console.log('itemId:', itemId, 'type:', typeof itemId);
-    console.log('saleId:', saleId, 'type:', typeof saleId);
-    console.log('Is itemId undefined/null?', !itemId);
-    console.log('Is saleId undefined/null?', !saleId);
+async performDelete(itemId: string | number, saleId: string | number) {
+    // Ensure IDs are valid numbers
+    const itemIdNum = Number(itemId);
+    const saleIdNum = Number(saleId);
+    
+    if (isNaN(itemIdNum) || isNaN(saleIdNum) || itemIdNum <= 0 || saleIdNum <= 0) {
+      console.error('Invalid IDs for delete:', { itemId, saleId });
+      this.showToast('Invalid item or sale ID');
+      return;
+    }
     
     this.loading = true;
-    this.salesReportsService.deleteItem(saleId, itemId).subscribe({
+    this.salesReportsService.deleteItem(saleIdNum, itemIdNum).subscribe({
       next: () => {
-        // Remove the item from the list
-        this.items = this.items.filter(item => item.itemId !== itemId);
+        // Remove the item from the list - use numeric comparison
+        this.items = this.items.filter(item => Number(item.itemId) !== itemIdNum);
         this.loading = false;
         this.showToast('Item deleted successfully');
       },
@@ -172,23 +175,33 @@ async performDelete(itemId: string, saleId: string) {
    }
 
 updateItemQuantity(itemId: string, saleId: string, quantity: number) {
-      // DEBUG: Log update parameters
-      console.log('=== DEBUG: Update Quantity Operation ===');
-      console.log('itemId:', itemId, 'type:', typeof itemId);
-      console.log('saleId:', saleId, 'type:', typeof saleId);
-      console.log('quantity:', quantity, 'type:', typeof quantity);
-      console.log('Is itemId undefined/null?', !itemId);
-      console.log('Is saleId undefined/null?', !saleId);
+      // Ensure IDs are valid numbers
+      const itemIdNum = Number(itemId);
+      const saleIdNum = Number(saleId);
+      const quantityNum = Math.floor(Number(quantity));
+      
+      if (isNaN(itemIdNum) || isNaN(saleIdNum) || itemIdNum <= 0 || saleIdNum <= 0) {
+        console.error('Invalid IDs for update:', { itemId, saleId });
+        this.showToast('Invalid item or sale ID');
+        return;
+      }
+      
+      if (isNaN(quantityNum) || quantityNum <= 0) {
+        console.error('Invalid quantity:', quantity);
+        this.showToast('Invalid quantity');
+        return;
+      }
       
       this.loading = true;
-      this.salesReportsService.updateItemQuantity(saleId, itemId, quantity).subscribe({
+      this.salesReportsService.updateItemQuantity(saleIdNum, itemIdNum, quantityNum).subscribe({
         next: (updatedItem:any) => {
-          // Update the item in the list
-          const index = this.items.findIndex(item => item.itemId === itemId);
+          // Update the item in the list - use numeric comparison
+          const index = this.items.findIndex(item => Number(item.itemId) === itemIdNum);
           if (index !== -1) {
             this.items[index] = {
               ...updatedItem,
-              saleId: saleId
+              itemId: itemIdNum,
+              saleId: saleIdNum
             };
           }
           this.loading = false;
