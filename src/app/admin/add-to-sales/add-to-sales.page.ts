@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ItemService } from '../../services/item.service';
 import { ScannerService, ScanResult } from '../../services/scanner.service';
 import { SaleService } from '../../services/sale.service';
@@ -23,8 +23,7 @@ interface SelectedItem {
   selector: 'app-add-to-sales',
   templateUrl: './add-to-sales.page.html',
   styleUrls: ['./add-to-sales.page.scss'],
-  standalone: false,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  standalone: false
 })
 export class AddToSalesPage implements OnInit {
   // Search

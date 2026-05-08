@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AlertController, IonicModule, LoadingController } from '@ionic/angular';
 import { AuthService, User } from '../services/auth.service';
 import { ActivityService, BackendActivity } from '../services/activity.service';
@@ -8,15 +8,14 @@ import { DailySales, MonthlySales, YearlySales, ItemBreakdown } from '../service
 import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
- // standalone: false,
-  //schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, BaseChartDirective,IonicModule]
+  standalone: false
 })
 export class AdminPage implements OnInit {
   dailySales: DailySales[] = [];
