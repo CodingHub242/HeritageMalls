@@ -64,7 +64,7 @@ export class SalesDetailPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/sales-reports']);
+    this.router.navigate(['/admin']);
   }
 
   exportToCsv() {
