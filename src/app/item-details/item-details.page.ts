@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ItemService } from '../services/item.service';
 import { Item } from '../models/item.model';
+import { ModalController } from '@ionic/angular';
+import { ItemFormModalComponent } from '../modals/item-form-modal/item-form-modal.component';
 
 @Component({
   selector: 'app-item-details',
@@ -17,7 +19,8 @@ export class ItemDetailsPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private itemService: ItemService
+    private itemService: ItemService,
+    private modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -38,10 +41,23 @@ export class ItemDetailsPage implements OnInit {
     );
   }
 
-  editItem() {
-    if (this.item && this.item.id) {
-      // Navigate to edit item page
-      console.log('Edit item functionality will be implemented');
+  async editItem() {
+    if (!this.item || !this.item.id) return;
+
+    const modal = await this.modalController.create({
+      component: ItemFormModalComponent,
+      componentProps: {
+        isEdit: true,
+        item: this.item
+      }
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onDidDismiss();
+    if (data) {
+      // Refresh the item data after edit
+      this.loadItem(parseInt(this.item.id));
     }
   }
 

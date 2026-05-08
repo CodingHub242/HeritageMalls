@@ -30,7 +30,7 @@
 
 <ion-content>
   <!-- Stats Cards -->
-  <ion-card *ngIf="activeTab === 'users'">
+  <ion-card *ngIf="activeTab === 'users'" style="max-width: 1000px;margin: 20px auto;">
     <ion-card-header>
       <ion-card-title>User Statistics</ion-card-title>
     </ion-card-header>
@@ -61,7 +61,7 @@
   </ion-card>
 
 <!-- Users Tab -->
-  <div *ngIf="activeTab === 'users'">
+  <div *ngIf="activeTab === 'users'" style="margin: 25px auto;max-width: 1000px;">
     <!-- User Role Filter -->
     <div class="user-filter-bar">
       <ion-segment [value]="userRoleFilter" (ionChange)="toggleUserRoleFilter($event.detail.value)">

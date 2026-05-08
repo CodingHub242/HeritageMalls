@@ -150,4 +150,8 @@ export class HomePage implements OnInit, OnDestroy {
   adminSide() {
     this.router.navigate(['/admin']);
   }
+
+  adminSale() {
+    this.router.navigate(['/add-to-sales']);
+  }
 }
