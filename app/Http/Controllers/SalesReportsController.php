@@ -102,9 +102,10 @@ class SalesReportsController extends Controller
     /**
      * Get detailed items sold for a specific date
      */
-    public function dailyItems($date, $detailed = false)
+    public function dailyItems($date, Request $request)
     {
         $userId = Auth::id();
+        $detailed = $request->query('detailed', false);
         
         if ($detailed) {
             // Return individual sale items for management
@@ -145,9 +146,10 @@ class SalesReportsController extends Controller
     /**
      * Get detailed items sold for a specific month (YYYY-MM)
      */
-    public function monthlyItems($month, $detailed = false)
+    public function monthlyItems($month, Request $request)
     {
         $userId = Auth::id();
+        $detailed = $request->query('detailed', false);
         
         if ($detailed) {
             // Return individual sale items for management
@@ -188,9 +190,10 @@ class SalesReportsController extends Controller
     /**
      * Get detailed items sold for a specific year
      */
-    public function yearlyItems($year, $detailed = false)
+    public function yearlyItems($year, Request $request)
     {
         $userId = Auth::id();
+        $detailed = $request->query('detailed', false);
         
         if ($detailed) {
             // Return individual sale items for management

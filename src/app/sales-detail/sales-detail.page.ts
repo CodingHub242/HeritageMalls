@@ -59,7 +59,7 @@ export class SalesDetailPage implements OnInit {
         this.items = data.map((item: any) => ({
           ...item,
           // Ensure we have both IDs for delete/update operations
-          saleId: item.saleId || this.periodValue, // Use API saleId or fallback to periodValue
+          saleId: item.saleItemId || this.periodValue, // Use API saleId or fallback to periodValue
           itemId: item.itemId || item.id // Ensure itemId is set
         }));
         console.log('Loaded items:', this.items);
