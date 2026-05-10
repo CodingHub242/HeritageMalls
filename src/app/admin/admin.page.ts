@@ -514,7 +514,7 @@ toggleCreateUserForm() {
   }
 
 goBack() {
-    window.history.back();
+    this.router.navigate(['/home']);
   }
 
 goToAddToSales() {
